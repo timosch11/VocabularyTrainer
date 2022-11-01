@@ -1,0 +1,40 @@
+{
+  "project_info": {
+    "project_number": "498722154374",
+    "firebase_url": "https://vocabularytrainer-59d2c-default-rtdb.firebaseio.com",
+    "project_id": "vocabularytrainer-59d2c",
+    "storage_bucket": "vocabularytrainer-59d2c.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:498722154374:android:aef59bccaf77043dcfee07",
+        "android_client_info": {
+          "package_name": "com.example.flutter_project"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "498722154374-8vakdtu6mlgjem5vlsqt78hdt8uuals4.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDvvIQxOgiHpg7ykqg6JhhStC41EK9bgJM"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "498722154374-8vakdtu6mlgjem5vlsqt78hdt8uuals4.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

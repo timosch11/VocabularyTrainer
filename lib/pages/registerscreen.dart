@@ -1,7 +1,9 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
 import 'package:chat_bubbles/chat_bubbles.dart';
 import 'package:age_calculator/age_calculator.dart';
+import "home.dart";
 
 class MyRegWidget extends StatefulWidget {
   const MyRegWidget({super.key});
@@ -206,7 +208,9 @@ class _MyRegisterWidgetState extends State<MyRegWidget> {
                           "age": AgeCalculator.age(date).years.toString(),
                           "password": passwordController.text
                         };
-                        dbRef.push().set(Student);
+                        dbRef.set(Student);
+                        signUp();
+                        signIn();
                       },
                       child: Text(
                         "Registrieren!",
@@ -219,5 +223,31 @@ class _MyRegisterWidgetState extends State<MyRegWidget> {
                     ),
                   ),
                 ])));
+  }
+
+  Future signUp() async {
+    try {
+      UserCredential result = await FirebaseAuth.instance
+          .createUserWithEmailAndPassword(
+              email: emailController.text.trim(),
+              password: passwordController.text.trim());
+      User? user = result.user;
+      user?.updateDisplayName(usernameController.text);
+
+      Navigator.of(context)
+          .push(MaterialPageRoute(builder: (context) => MyHomeWidget()));
+    } on FirebaseAuthException catch (e) {
+      print(e);
+    }
+  }
+
+  Future signIn() async {
+    try {
+      await FirebaseAuth.instance.signInWithEmailAndPassword(
+          email: emailController.text.trim(),
+          password: passwordController.text.trim());
+    } on FirebaseAuthException catch (e) {
+      print(e);
+    }
   }
 }
