@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:chat_bubbles/chat_bubbles.dart';
 import 'package:age_calculator/age_calculator.dart';
 import "home.dart";
+import 'package:cloud_firestore/cloud_firestore.dart';
 
 class MyRegWidget extends StatefulWidget {
   const MyRegWidget({super.key});
@@ -227,13 +228,24 @@ class _MyRegisterWidgetState extends State<MyRegWidget> {
 
   Future signUp() async {
     try {
+      CollectionReference firestoreref =
+          FirebaseFirestore.instance.collection('Students');
       UserCredential result = await FirebaseAuth.instance
           .createUserWithEmailAndPassword(
               email: emailController.text.trim(),
               password: passwordController.text.trim());
       User? user = result.user;
       user?.updateDisplayName(usernameController.text);
+      var userdata = {
+        "email": emailController.text,
+        "username": usernameController.text,
+        "birthday": date.toString(),
+        "age": AgeCalculator.age(date).years.toString(),
+        "password": passwordController.text
+      };
 
+      firestoreref.doc(user?.uid).set(userdata);
+      print(firestoreref);
       Navigator.of(context)
           .push(MaterialPageRoute(builder: (context) => MyHomeWidget()));
     } on FirebaseAuthException catch (e) {

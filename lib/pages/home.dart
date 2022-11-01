@@ -6,6 +6,10 @@ import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter_circular_text/circular_text.dart';
 import 'package:flag/flag.dart';
 import 'loginscreen.dart';
+import "startingpage.dart";
+import "AddVocabs.dart";
+import "AskVocabs.dart";
+import "Settings.dart";
 
 class MyHomeWidget extends StatefulWidget {
   const MyHomeWidget({super.key});
@@ -16,6 +20,7 @@ class MyHomeWidget extends StatefulWidget {
 
 class MyHomeWidgetState extends State<MyHomeWidget> {
   late DatabaseReference dbRef;
+  int _currentIndex = 0;
   bool isPlaying = false;
   final controller = ConfettiController(duration: const Duration(seconds: 2));
   @override
@@ -25,6 +30,12 @@ class MyHomeWidgetState extends State<MyHomeWidget> {
     controller.play();
   }
 
+  final screens = [
+    MyStartingPageWidget(),
+    MyAddVocabsWidget(),
+    MyAskVocabsWidget(),
+    MySettingsWidget()
+  ];
   @override
   Widget build(BuildContext context) {
     final user = FirebaseAuth.instance.currentUser!;
@@ -44,91 +55,62 @@ class MyHomeWidgetState extends State<MyHomeWidget> {
     print(a);
     return MaterialApp(
         home: Scaffold(
-      backgroundColor: Color(0xffeaeaea),
-      resizeToAvoidBottomInset: false,
-      appBar: AppBar(
-        backgroundColor: Color(0xffA1CAD0),
-        title: Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
-            Image.asset(
-              'assets/images/logo-removebg-preview-ConvertImage.png',
-              fit: BoxFit.fitHeight,
-              height: 32,
-            ),
-            Container(
-                padding: const EdgeInsets.all(8.0),
-                child: Text("${user.displayName.toString().toUpperCase()}")),
-            Flag.fromCode(
-              FlagsCode.GB,
-              width: 45,
-              height: 25,
-            ),
-          ],
-        ),
-      ),
-      body: Column(
-        mainAxisAlignment: MainAxisAlignment.start,
-        crossAxisAlignment: CrossAxisAlignment.center,
-        children: [
-          ConfettiWidget(
-            confettiController: controller,
-            shouldLoop: false,
-            //maxBlastForce: 100,
-            //minBlastForce: 80,
-            emissionFrequency: 0.5,
-            blastDirectionality: BlastDirectionality.explosive,
-          ),
-          SizedBox(
-            height: 40,
-          ),
-          ConfettiWidget(
-            confettiController: controller,
-            shouldLoop: true,
-          ),
-          CircularText(
-            children: [
-              TextItem(
-                text: Text(
-                  "Welcome Back!".toUpperCase(),
-                  style: TextStyle(
-                    fontSize: 28,
-                    color: Color(0xff1d4e89),
-                    fontWeight: FontWeight.bold,
+            backgroundColor: Color(0xffeaeaea),
+            resizeToAvoidBottomInset: false,
+            appBar: AppBar(
+              backgroundColor: Color(0xffA1CAD0),
+              title: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Image.asset(
+                    'assets/images/logo-removebg-preview-ConvertImage.png',
+                    fit: BoxFit.fitHeight,
+                    height: 32,
                   ),
-                ),
-                space: 8,
-                startAngle: -90,
-                startAngleAlignment: StartAngleAlignment.center,
-                direction: CircularTextDirection.clockwise,
-              )
-            ],
-            radius: 180,
-            position: CircularTextPosition.inside,
-          ),
-          Text(
-            "Welcome Back ${user.displayName.toString()} :)",
-            style: TextStyle(
-              fontSize: 30.0,
-              fontWeight: FontWeight.bold,
-              color: Color(0xff1d4e89),
-            ),
-          ),
-          Spacer(),
-          ElevatedButton.icon(
-              style: ElevatedButton.styleFrom(
-                minimumSize: Size.fromHeight(50),
+                  Container(
+                      padding: const EdgeInsets.all(8.0),
+                      child:
+                          Text("${user.displayName.toString().toUpperCase()}")),
+                  Flag.fromCode(
+                    FlagsCode.GB,
+                    width: 45,
+                    height: 25,
+                  ),
+                ],
               ),
-              onPressed: (() {
-                FirebaseAuth.instance.signOut();
-              }),
-              icon: Icon(Icons.arrow_back, size: 32),
-              label: Text(
-                "Sign out",
-                style: TextStyle(fontSize: 24),
-              ))
-        ],
-      ),
-    ));
+            ),
+            body: screens[_currentIndex],
+            bottomNavigationBar: BottomNavigationBar(
+              onTap: (index) => setState(() => _currentIndex = index),
+              currentIndex: _currentIndex,
+              selectedFontSize: 10,
+              selectedIconTheme:
+                  IconThemeData(color: Colors.redAccent, size: 25),
+              selectedItemColor: Colors.white,
+              selectedLabelStyle: TextStyle(fontWeight: FontWeight.bold),
+              unselectedIconTheme: IconThemeData(
+                color: Colors.white,
+              ),
+              unselectedItemColor: Colors.white,
+              items: const <BottomNavigationBarItem>[
+                BottomNavigationBarItem(
+                  icon: Icon(Icons.home_rounded),
+                  backgroundColor: Color(0xffA1CAD0),
+                  label: 'Home',
+                ),
+                BottomNavigationBarItem(
+                    icon: Icon(Icons.edit_rounded),
+                    backgroundColor: Color(0xffA1CAD0),
+                    label: "Edit"),
+                BottomNavigationBarItem(
+                    icon: Icon(Icons.auto_stories_rounded),
+                    backgroundColor: Color(0xffA1CAD0),
+                    label: "Learn"),
+                BottomNavigationBarItem(
+                    icon: Icon(Icons.settings_rounded),
+                    backgroundColor: Color(0xffA1CAD0),
+                    label: "Settings"),
+              ],
+            )));
   }
 }
