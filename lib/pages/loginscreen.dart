@@ -26,6 +26,7 @@ class MyLoginWidgetState extends State<MyLoginWidget> {
 
   @override
   Widget build(BuildContext context) {
+    final isKeyboard = MediaQuery.of(context).viewInsets.bottom != 0;
     return MaterialApp(
         navigatorKey: navigatorKey,
         debugShowCheckedModeBanner: false,
@@ -44,18 +45,20 @@ class MyLoginWidgetState extends State<MyLoginWidget> {
                             mainAxisAlignment: MainAxisAlignment.center,
                             crossAxisAlignment: CrossAxisAlignment.center,
                             children: [
-                              Image(
-                                  image: AssetImage('assets/images/logo.png'),
-                                  width: 144,
-                                  height: 185),
-                              BubbleSpecialThree(
-                                text: 'Hi!',
-                                color: Color(0xffA1CAD0),
-                                tail: true,
-                                isSender: false,
-                                textStyle: TextStyle(
-                                    color: Colors.white, fontSize: 25),
-                              ),
+                              if (!isKeyboard)
+                                Image(
+                                    image: AssetImage('assets/images/logo.png'),
+                                    width: 144,
+                                    height: 185),
+                              if (!isKeyboard)
+                                BubbleSpecialThree(
+                                  text: 'Hi!',
+                                  color: Color(0xffA1CAD0),
+                                  tail: true,
+                                  isSender: false,
+                                  textStyle: TextStyle(
+                                      color: Colors.white, fontSize: 25),
+                                ),
                             ],
                           ),
                           RichText(

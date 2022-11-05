@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter_circular_text/circular_text.dart';
+import 'package:liquid_swipe/liquid_swipe.dart';
 import 'package:flag/flag.dart';
 import 'loginscreen.dart';
 import "startingpage.dart";
