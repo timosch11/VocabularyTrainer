@@ -45,7 +45,7 @@ class MyAskVocabsWidgetState extends State<MyAskVocabsWidget> {
                       color: bg,
                       child: Column(children: [
                         Text(
-                            "${data!['germanWord']} : ${data!['toTranslateWord']}")
+                            "${data!['germanWord']} : ${data['toTranslateWord']}")
                       ]));
                 }),
               );

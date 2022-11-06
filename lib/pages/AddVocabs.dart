@@ -94,7 +94,11 @@ class MyAddVocabsWidgetState extends State<MyAddVocabsWidget> {
                   ),
                   Divider(color: Color(0xffA1CAD0), thickness: 2),
                   StreamBuilder<QuerySnapshot>(
-                      stream: ref.snapshots(),
+                      stream: FirebaseFirestore.instance
+                          .collection("Students")
+                          .doc(FirebaseAuth.instance.currentUser!.uid)
+                          .collection("Vocabs")
+                          .snapshots(),
                       builder: (context, snapshot) {
                         if (!snapshot.hasData)
                           return const Text("Loading.....");
@@ -103,6 +107,8 @@ class MyAddVocabsWidgetState extends State<MyAddVocabsWidget> {
                           List<String> curr = [];
                           for (int i = 0; i < snapshot.data!.docs.length; i++) {
                             var snap = snapshot.data!.docs[i]["category"];
+                            print("Here:" +
+                                FirebaseAuth.instance.currentUser!.uid);
 
                             if (curr.contains(snap) == false) {
                               curr.add(snapshot.data!.docs[i]["category"]);
@@ -229,6 +235,7 @@ class MyAddVocabsWidgetState extends State<MyAddVocabsWidget> {
   }
 
   void add_category() async {
+    category ??= "No Category";
     var data = {
       "category": category,
       "germanWord": "dummy",

@@ -5,6 +5,7 @@ import 'package:chat_bubbles/chat_bubbles.dart';
 import 'package:age_calculator/age_calculator.dart';
 import "home.dart";
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'dart:io';
 
 class MyRegWidget extends StatefulWidget {
   const MyRegWidget({super.key});
@@ -211,6 +212,7 @@ class _MyRegisterWidgetState extends State<MyRegWidget> {
                         };
                         dbRef.set(Student);
                         signUp();
+
                         signIn();
                       },
                       child: Text(
@@ -245,9 +247,20 @@ class _MyRegisterWidgetState extends State<MyRegWidget> {
       };
 
       firestoreref.doc(user?.uid).set(userdata);
+      sleep(Duration(seconds: 1));
       print(firestoreref);
+      var uid = user?.uid;
       Navigator.of(context)
           .push(MaterialPageRoute(builder: (context) => MyHomeWidget()));
+      var data = {
+        "category": "No Category",
+        "germanWord": "dummy",
+        "toTranslateWord": "dummy",
+        "created": DateTime.now()
+      };
+      print("uid " + uid!);
+
+      firestoreref.doc(user?.uid).collection("Vocabs").add(data);
     } on FirebaseAuthException catch (e) {
       print(e);
     }
