@@ -16,22 +16,6 @@ CollectionReference ref = FirebaseFirestore.instance
     .doc(FirebaseAuth.instance.currentUser!.uid)
     .collection("Vocabs");
 late var items;
-Future<Iterable<Object?>> getData() async {
-  // Get docs from collection reference
-  QuerySnapshot querySnapshot = await ref.get();
-
-  // Get data from docs and convert map to List
-  final allData = querySnapshot.docs
-      .map((doc) => doc.data() as Map<dynamic, dynamic>)
-      .toList();
-  var list;
-  for (var i = 0; i < allData.length; i++) {
-    list.add(allData[i]);
-    print(allData[i]);
-  }
-  print(list);
-  return allData;
-}
 
 class MyAddVocabsWidgetState extends State<MyAddVocabsWidget> {
   String category = "";
@@ -44,7 +28,6 @@ class MyAddVocabsWidgetState extends State<MyAddVocabsWidget> {
   var selectedCurrency, selectedType;
   @override
   void initState() {
-    var allData = getData();
     super.initState();
   }
 
@@ -161,7 +144,7 @@ class MyAddVocabsWidgetState extends State<MyAddVocabsWidget> {
                                 isExpanded: false,
                                 hint: new Text(
                                   "Choose Category",
-                                  style: TextStyle(color: Color(0xff11b719)),
+                                  style: TextStyle(color: Colors.grey[900]),
                                 ),
                               ),
                             ],
