@@ -9,17 +9,41 @@ class MyAddVocabsWidget extends StatefulWidget {
   MyAddVocabsWidgetState createState() => MyAddVocabsWidgetState();
 }
 
-final List<String> list = <String>['One', 'Two', 'Three', 'Four'];
+List<String> list = <String>['One', 'Two', 'Three', 'Four'];
+
+CollectionReference ref = FirebaseFirestore.instance
+    .collection("Students")
+    .doc(FirebaseAuth.instance.currentUser!.uid)
+    .collection("Vocabs");
+late var items;
+Future<Iterable<Object?>> getData() async {
+  // Get docs from collection reference
+  QuerySnapshot querySnapshot = await ref.get();
+
+  // Get data from docs and convert map to List
+  final allData = querySnapshot.docs
+      .map((doc) => doc.data() as Map<dynamic, dynamic>)
+      .toList();
+  var list;
+  for (var i = 0; i < allData.length; i++) {
+    list.add(allData[i]);
+    print(allData[i]);
+  }
+  print(list);
+  return allData;
+}
 
 class MyAddVocabsWidgetState extends State<MyAddVocabsWidget> {
   String category = "";
   String toTranslateWord = "";
   String germanWord = "";
   String dropdownValue = list.first;
-  CollectionReference ref = FirebaseFirestore.instance
-      .collection("Students")
-      .doc(FirebaseAuth.instance.currentUser!.uid)
-      .collection("Vocabs");
+  var selectedCurrency, selectedType;
+  @override
+  void initState() {
+    var allData = getData();
+    super.initState();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -34,50 +58,66 @@ class MyAddVocabsWidgetState extends State<MyAddVocabsWidget> {
                   Row(
                     crossAxisAlignment: CrossAxisAlignment.center,
                     mainAxisAlignment: MainAxisAlignment.end,
-                    children: [
-                      ElevatedButton(
-                        onPressed: () {
-                          add();
-                        },
-                        child: Text(
-                          "Save",
-                          style: TextStyle(
-                              fontSize: 16,
-                              fontFamily: "lato",
-                              color: Colors.white),
-                        ),
-                        style: ButtonStyle(
-                            backgroundColor:
-                                MaterialStatePropertyAll(Colors.grey[700]),
-                            padding: MaterialStateProperty.all(
-                                EdgeInsets.symmetric(
-                                    horizontal: 25, vertical: 8))),
-                      ),
-                    ],
+                    children: [],
                   ),
-                  DropdownButton<String>(
-                    value: dropdownValue,
-                    icon: const Icon(Icons.arrow_downward),
-                    elevation: 16,
-                    style: const TextStyle(
-                        color: Colors.black, fontWeight: FontWeight.bold),
-                    underline: Container(
-                      height: 5,
-                      color: Color(0xffA1CAD0),
-                    ),
-                    onChanged: (String? value) {
-                      // This is called when the user selects an item.
-                      setState(() {
-                        dropdownValue = value!;
-                      });
-                    },
-                    items: list.map<DropdownMenuItem<String>>((String value) {
-                      return DropdownMenuItem<String>(
-                        value: value,
-                        child: Text(value),
-                      );
-                    }).toList(),
-                  ),
+                  StreamBuilder<QuerySnapshot>(
+                      stream: ref.snapshots(),
+                      builder: (context, snapshot) {
+                        if (!snapshot.hasData)
+                          return const Text("Loading.....");
+                        else {
+                          List<DropdownMenuItem> currencyItems = [];
+                          List<String> curr = [];
+                          for (int i = 0; i < snapshot.data!.docs.length; i++) {
+                            var snap = snapshot.data!.docs[i]["category"];
+
+                            if (curr.contains(snap) == false) {
+                              curr.add(snapshot.data!.docs[i]["category"]);
+                              currencyItems.add(
+                                DropdownMenuItem(
+                                  child: Text(
+                                    snap,
+                                    style: TextStyle(color: Colors.black),
+                                  ),
+                                  value: snap,
+                                ),
+                              );
+                            }
+                          }
+
+                          return Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: <Widget>[
+                              const Icon(Icons.category,
+                                  size: 25.0, color: Colors.black),
+                              SizedBox(width: 50.0),
+                              DropdownButton(
+                                items: currencyItems,
+                                onChanged: (currencyValue) {
+                                  final snackBar = SnackBar(
+                                    content: Text(
+                                      'Selected Category is $currencyValue',
+                                      style:
+                                          TextStyle(color: Color(0xffA1CAD0)),
+                                    ),
+                                  );
+                                  ScaffoldMessenger.of(context)
+                                      .showSnackBar(snackBar);
+                                  setState(() {
+                                    selectedCurrency = currencyValue;
+                                  });
+                                },
+                                value: selectedCurrency,
+                                isExpanded: false,
+                                hint: new Text(
+                                  "Choose Currency Type",
+                                  style: TextStyle(color: Color(0xff11b719)),
+                                ),
+                              ),
+                            ],
+                          );
+                        }
+                      }),
                   Container(
                     padding: const EdgeInsets.fromLTRB(0, 15, 0, 0),
                     child: TextFormField(
@@ -140,6 +180,20 @@ class MyAddVocabsWidgetState extends State<MyAddVocabsWidget> {
                         textAlign: TextAlign.center,
                         onChanged: (value) {}),
                   ),
+                  ElevatedButton(
+                      onPressed: () {
+                        add();
+                      },
+                      child: Text(
+                        "Save",
+                        style: TextStyle(
+                            fontSize: 16,
+                            fontFamily: "lato",
+                            color: Colors.white),
+                      ),
+                      style: ElevatedButton.styleFrom(
+                          primary: Colors.black,
+                          minimumSize: const Size.fromHeight(50)))
                 ],
               ),
             ),
@@ -151,7 +205,7 @@ class MyAddVocabsWidgetState extends State<MyAddVocabsWidget> {
 
   void add() async {
     var data = {
-      "category": category,
+      "category": selectedCurrency,
       "germanWord": germanWord,
       "toTranslateWord": toTranslateWord,
       "created": DateTime.now()
