@@ -10,7 +10,7 @@ class MyAddVocabsWidget extends StatefulWidget {
 }
 
 List<String> list = <String>['One', 'Two', 'Three', 'Four'];
-
+var cat;
 CollectionReference ref = FirebaseFirestore.instance
     .collection("Students")
     .doc(FirebaseAuth.instance.currentUser!.uid)
@@ -38,6 +38,9 @@ class MyAddVocabsWidgetState extends State<MyAddVocabsWidget> {
   String toTranslateWord = "";
   String germanWord = "";
   String dropdownValue = list.first;
+  final TextEditingController _textController = new TextEditingController();
+  final TextEditingController _textController2 = new TextEditingController();
+  final TextEditingController _textController3 = new TextEditingController();
   var selectedCurrency, selectedType;
   @override
   void initState() {
@@ -55,11 +58,58 @@ class MyAddVocabsWidgetState extends State<MyAddVocabsWidget> {
             Form(
               child: Column(
                 children: [
-                  Row(
-                    crossAxisAlignment: CrossAxisAlignment.center,
-                    mainAxisAlignment: MainAxisAlignment.end,
-                    children: [],
+                  Container(
+                    padding: const EdgeInsets.fromLTRB(5, 10, 20, 20),
+                    alignment: Alignment.bottomCenter,
+                    child: Row(
+                      children: [
+                        SizedBox(
+                          width: 250,
+                          child: TextFormField(
+                              controller: _textController,
+                              decoration: InputDecoration(
+                                contentPadding:
+                                    const EdgeInsets.symmetric(vertical: 2),
+                                hintText: "Add Category",
+                                focusedBorder: OutlineInputBorder(
+                                  borderRadius: BorderRadius.circular(25.0),
+                                  borderSide: BorderSide(
+                                    color: Colors.blue,
+                                  ),
+                                ),
+                                enabledBorder: OutlineInputBorder(
+                                  borderRadius: BorderRadius.circular(25.0),
+                                  borderSide: BorderSide(
+                                    color: Colors.blue,
+                                    width: 0.0,
+                                  ),
+                                ),
+                              ),
+                              style: TextStyle(
+                                  fontSize: 20,
+                                  fontFamily: "lato",
+                                  fontWeight: FontWeight.bold,
+                                  color: Colors.grey),
+                              textAlign: TextAlign.center,
+                              onChanged: (value) {
+                                category = value;
+                              }),
+                        ),
+                        Container(
+                          padding: EdgeInsets.fromLTRB(20, 0, 0, 0),
+                          child: ElevatedButton(
+                              style: ElevatedButton.styleFrom(
+                                  backgroundColor: Color(0xffA1CAD0)),
+                              onPressed: () {
+                                add_category();
+                                _textController.clear();
+                              },
+                              child: Icon(Icons.add)),
+                        )
+                      ],
+                    ),
                   ),
+                  Divider(color: Color(0xffA1CAD0), thickness: 2),
                   StreamBuilder<QuerySnapshot>(
                       stream: ref.snapshots(),
                       builder: (context, snapshot) {
@@ -110,7 +160,7 @@ class MyAddVocabsWidgetState extends State<MyAddVocabsWidget> {
                                 value: selectedCurrency,
                                 isExpanded: false,
                                 hint: new Text(
-                                  "Choose Currency Type",
+                                  "Choose Category",
                                   style: TextStyle(color: Color(0xff11b719)),
                                 ),
                               ),
@@ -119,8 +169,9 @@ class MyAddVocabsWidgetState extends State<MyAddVocabsWidget> {
                         }
                       }),
                   Container(
-                    padding: const EdgeInsets.fromLTRB(0, 15, 0, 0),
+                    padding: const EdgeInsets.fromLTRB(0, 50, 0, 0),
                     child: TextFormField(
+                      controller: _textController3,
                       decoration: InputDecoration(hintText: "German Word"),
                       textAlign: TextAlign.center,
                       style: TextStyle(
@@ -138,6 +189,7 @@ class MyAddVocabsWidgetState extends State<MyAddVocabsWidget> {
                   Container(
                     padding: const EdgeInsets.only(top: 10),
                     child: TextFormField(
+                      controller: _textController2,
                       decoration: InputDecoration(hintText: "Translation"),
                       textAlign: TextAlign.center,
                       style: TextStyle(
@@ -153,47 +205,24 @@ class MyAddVocabsWidgetState extends State<MyAddVocabsWidget> {
                     ),
                   ),
                   Container(
-                    padding: const EdgeInsets.fromLTRB(20, 120, 20, 20),
-                    alignment: Alignment.bottomCenter,
-                    child: TextFormField(
-                        decoration: InputDecoration(
-                          hintText: "Add Category",
-                          focusedBorder: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(25.0),
-                            borderSide: BorderSide(
-                              color: Colors.blue,
-                            ),
-                          ),
-                          enabledBorder: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(25.0),
-                            borderSide: BorderSide(
-                              color: Colors.blue,
-                              width: 2.0,
-                            ),
-                          ),
+                    padding: EdgeInsets.only(top: 50),
+                    child: ElevatedButton(
+                        onPressed: () {
+                          add();
+                          _textController2.clear();
+                          _textController3.clear();
+                        },
+                        child: Text(
+                          "Save",
+                          style: TextStyle(
+                              fontSize: 16,
+                              fontFamily: "lato",
+                              color: Colors.white),
                         ),
-                        style: TextStyle(
-                            fontSize: 25,
-                            fontFamily: "lato",
-                            fontWeight: FontWeight.bold,
-                            color: Colors.grey),
-                        textAlign: TextAlign.center,
-                        onChanged: (value) {}),
-                  ),
-                  ElevatedButton(
-                      onPressed: () {
-                        add();
-                      },
-                      child: Text(
-                        "Save",
-                        style: TextStyle(
-                            fontSize: 16,
-                            fontFamily: "lato",
-                            color: Colors.white),
-                      ),
-                      style: ElevatedButton.styleFrom(
-                          primary: Colors.black,
-                          minimumSize: const Size.fromHeight(50)))
+                        style: ElevatedButton.styleFrom(
+                            primary: Color(0xffA1CAD0),
+                            minimumSize: const Size.fromHeight(50))),
+                  )
                 ],
               ),
             ),
@@ -212,6 +241,20 @@ class MyAddVocabsWidgetState extends State<MyAddVocabsWidget> {
     };
 
     ref.add(data);
+
+    //Navigator.pop(context);
+  }
+
+  void add_category() async {
+    var data = {
+      "category": category,
+      "germanWord": "dummy",
+      "toTranslateWord": "dummy",
+      "created": DateTime.now()
+    };
+
+    ref.add(data);
+    selectedCurrency = category;
     //Navigator.pop(context);
   }
 }
