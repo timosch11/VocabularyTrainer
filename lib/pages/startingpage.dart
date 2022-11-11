@@ -46,7 +46,7 @@ class MyStartingPageWidgetState extends State<MyStartingPageWidget> {
               children: [
                 TextItem(
                   text: Text(
-                    "Welcome Back!".toUpperCase(),
+                    "Welcome!".toUpperCase(),
                     style: TextStyle(
                       fontSize: 28,
                       color: Color(0xff1d4e89),
@@ -63,7 +63,7 @@ class MyStartingPageWidgetState extends State<MyStartingPageWidget> {
               position: CircularTextPosition.inside,
             ),
             Text(
-              "Welcome Back ${user.displayName.toString()} :)",
+              "Welcome ${user.displayName.toString()} :)",
               style: TextStyle(
                 fontSize: 30.0,
                 fontWeight: FontWeight.bold,

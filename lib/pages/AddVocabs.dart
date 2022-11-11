@@ -127,7 +127,7 @@ class MyAddVocabsWidgetState extends State<MyAddVocabsWidget> {
                           return Row(
                             mainAxisAlignment: MainAxisAlignment.center,
                             children: <Widget>[
-                              const Icon(Icons.category,
+                              const Icon(Icons.category_rounded,
                                   size: 25.0, color: Colors.black),
                               SizedBox(width: 50.0),
                               DropdownButton(
@@ -167,7 +167,7 @@ class MyAddVocabsWidgetState extends State<MyAddVocabsWidget> {
                           fontSize: 35,
                           fontFamily: "lato",
                           fontWeight: FontWeight.bold,
-                          color: Colors.grey),
+                          color: Colors.black),
                       onChanged: (value) {
                         germanWord = value;
                       },
@@ -185,7 +185,7 @@ class MyAddVocabsWidgetState extends State<MyAddVocabsWidget> {
                           fontSize: 35,
                           fontFamily: "lato",
                           fontWeight: FontWeight.bold,
-                          color: Colors.grey),
+                          color: Colors.black),
                       onChanged: (value) {
                         toTranslateWord = value;
                       },
@@ -235,7 +235,6 @@ class MyAddVocabsWidgetState extends State<MyAddVocabsWidget> {
   }
 
   void add_category() async {
-    category ??= "No Category";
     var data = {
       "category": category,
       "germanWord": "dummy",
