@@ -8,9 +8,14 @@ import 'package:flutter_countdown_timer/flutter_countdown_timer.dart';
 import 'package:percent_indicator/percent_indicator.dart';
 
 class MyQuiz extends StatefulWidget {
-  const MyQuiz({super.key, required this.category, required this.time});
+  const MyQuiz(
+      {super.key,
+      required this.category,
+      required this.time,
+      required this.NoOfVocabs});
   final String category;
   final int time;
+  final int NoOfVocabs;
 
   @override
   MyQuizState createState() => MyQuizState();
@@ -286,8 +291,8 @@ class MyQuizState extends State<MyQuiz> with SingleTickerProviderStateMixin {
                             backgroundColor: Colors.grey,
                             progressColor: Color(0xffA1CAD0),
                             animation: true,
-                            center:
-                                Text("${(counter_ / (dat.length - 2)) * 100}%"),
+                            center: Text(
+                                "${((counter_ / (dat.length - 2)) * 100).toStringAsFixed(0)}%"),
                             linearStrokeCap: LinearStrokeCap.roundAll,
                           ),
                         ),

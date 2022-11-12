@@ -18,6 +18,7 @@ class MyAskVocabsWidgetState extends State<MyAskVocabsWidget> {
   int counter = 0;
   String category = "No Category";
   int timespan = 0;
+  int NoOfVocs = 0;
   void incrementCounter() {
     setState(() => counter = 1);
   }
@@ -34,6 +35,12 @@ class MyAskVocabsWidgetState extends State<MyAskVocabsWidget> {
     });
   }
 
+  void getNoOfVocs(int vocs) {
+    setState(() {
+      NoOfVocs = vocs;
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     final screens = [
@@ -41,10 +48,12 @@ class MyAskVocabsWidgetState extends State<MyAskVocabsWidget> {
         incrementCounter: incrementCounter,
         getCategory: getCategory,
         getTimespan: getTimespan,
+        getNoOfVocs: getNoOfVocs,
       ),
       MyQuiz(
         category: category,
         time: timespan,
+        NoOfVocabs: NoOfVocs,
       )
     ];
     // TODO: implement build

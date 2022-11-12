@@ -4,14 +4,17 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 
 class MyCreateQuizWidget extends StatefulWidget {
-  const MyCreateQuizWidget(
-      {super.key,
-      required this.incrementCounter,
-      required this.getCategory,
-      required this.getTimespan});
+  const MyCreateQuizWidget({
+    super.key,
+    required this.incrementCounter,
+    required this.getCategory,
+    required this.getTimespan,
+    required this.getNoOfVocs,
+  });
   final Function() incrementCounter;
   final Function(String cat) getCategory;
   final Function(int time) getTimespan;
+  final Function(int vocs) getNoOfVocs;
   @override
   MyCreateQuizWidgetState createState() => MyCreateQuizWidgetState();
 }
@@ -141,6 +144,8 @@ class MyCreateQuizWidgetState extends State<MyCreateQuizWidget> {
                     widget.getCategory(category);
                     widget.getTimespan(int.parse(
                         result[0]!.substring(0, result[0]!.length - 4)));
+                    widget.getNoOfVocs(int.parse(
+                        result[0]!.substring(0, result[1]!.length - 4)));
                     widget.incrementCounter();
                   },
                   child: Text(
