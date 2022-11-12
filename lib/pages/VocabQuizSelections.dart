@@ -4,8 +4,14 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 
 class MyCreateQuizWidget extends StatefulWidget {
-  const MyCreateQuizWidget({super.key, required this.incrementCounter});
+  const MyCreateQuizWidget(
+      {super.key,
+      required this.incrementCounter,
+      required this.getCategory,
+      required this.getTimespan});
   final Function() incrementCounter;
+  final Function(String cat) getCategory;
+  final Function(int time) getTimespan;
   @override
   MyCreateQuizWidgetState createState() => MyCreateQuizWidgetState();
 }
@@ -80,6 +86,7 @@ class MyCreateQuizWidgetState extends State<MyCreateQuizWidget> {
                                   .showSnackBar(snackBar);
                               setState(() {
                                 selectedCurrency = currencyValue;
+                                var category = currencyValue;
                               });
                             },
                             value: selectedCurrency,
@@ -104,6 +111,7 @@ class MyCreateQuizWidgetState extends State<MyCreateQuizWidget> {
                       callback: (p0) {
                         setState(() {
                           result[0] = p0;
+                          var time = p0;
                         });
                       },
                       data: alphabets.map((e) => e + " min").toList(),
@@ -129,6 +137,10 @@ class MyCreateQuizWidgetState extends State<MyCreateQuizWidget> {
                   style: ElevatedButton.styleFrom(
                       backgroundColor: Color(0xffA1CAD0)),
                   onPressed: () {
+                    var category = selectedCurrency;
+                    widget.getCategory(category);
+                    widget.getTimespan(int.parse(
+                        result[0]!.substring(0, result[0]!.length - 4)));
                     widget.incrementCounter();
                   },
                   child: Text(

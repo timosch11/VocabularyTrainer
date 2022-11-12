@@ -16,9 +16,22 @@ class MyAskVocabsWidget extends StatefulWidget {
 
 class MyAskVocabsWidgetState extends State<MyAskVocabsWidget> {
   int counter = 0;
-
+  String category = "No Category";
+  int timespan = 0;
   void incrementCounter() {
     setState(() => counter = 1);
+  }
+
+  void getCategory(String cat) {
+    setState(() {
+      category = cat;
+    });
+  }
+
+  void getTimespan(int time) {
+    setState(() {
+      timespan = time;
+    });
   }
 
   @override
@@ -26,8 +39,13 @@ class MyAskVocabsWidgetState extends State<MyAskVocabsWidget> {
     final screens = [
       MyCreateQuizWidget(
         incrementCounter: incrementCounter,
+        getCategory: getCategory,
+        getTimespan: getTimespan,
       ),
-      MyQuiz()
+      MyQuiz(
+        category: category,
+        time: timespan,
+      )
     ];
     // TODO: implement build
     print(counter);
