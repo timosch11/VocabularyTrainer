@@ -6,6 +6,9 @@ import 'pages/loginscreen.dart';
 import 'pages/registerscreen.dart';
 
 Future<void> main() async {
+  ErrorWidget.builder = (FlutterErrorDetails details) {
+    return SizedBox.shrink();
+  };
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp();
   runApp(MaterialApp(home: MyLoginWidget()));

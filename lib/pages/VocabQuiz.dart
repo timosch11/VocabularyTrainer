@@ -24,6 +24,7 @@ class MyQuiz extends StatefulWidget {
 var selectedCurrency, selectedType;
 var cat;
 late var items;
+var usedtip = false;
 
 class MyQuizState extends State<MyQuiz> with SingleTickerProviderStateMixin {
   late AnimationController _animationController;
@@ -32,6 +33,9 @@ class MyQuizState extends State<MyQuiz> with SingleTickerProviderStateMixin {
   AnimationStatus _animationStatus = AnimationStatus.dismissed;
   final TextEditingController _textController = new TextEditingController();
   int endTime = 0;
+  var answers = List.empty(growable: true);
+
+  var sessionkey = UniqueKey().toString();
   @override
   void initState() {
     endTime = DateTime.now().millisecondsSinceEpoch + 1000 * widget.time * 60;
@@ -130,6 +134,7 @@ class MyQuizState extends State<MyQuiz> with SingleTickerProviderStateMixin {
                                 ..rotateY(pi * _animation.value * 2),
                               child: GestureDetector(
                                   onTap: () {
+                                    usedtip = true;
                                     if (_animationStatus ==
                                         AnimationStatus.dismissed) {
                                       _animationController.forward();
@@ -172,47 +177,49 @@ class MyQuizState extends State<MyQuiz> with SingleTickerProviderStateMixin {
                         ),
                         Divider(),
                         Divider(),
-                        Container(
-                            color: Color(0xffA1CAD0),
-                            height: 200,
-                            width: 300,
-                            child: Card(
-                                color: Color(0xffA1CAD0),
-                                child: Container(
-                                    child: Center(
-                                  child: TextFormField(
-                                      controller: _textController,
-                                      decoration: InputDecoration(
-                                        filled: true,
-                                        fillColor: Colors.white30,
-                                        contentPadding:
-                                            const EdgeInsets.symmetric(
-                                                vertical: 2),
-                                        hintText: "Translation",
-                                        focusedBorder: OutlineInputBorder(
-                                          borderRadius:
-                                              BorderRadius.circular(25.0),
-                                          borderSide: BorderSide(
-                                            color: Colors.white,
+                        Expanded(
+                          child: Container(
+                              color: Color(0xffA1CAD0),
+                              height: 200,
+                              width: 300,
+                              child: Card(
+                                  color: Color(0xffA1CAD0),
+                                  child: Container(
+                                      child: Center(
+                                    child: TextFormField(
+                                        controller: _textController,
+                                        decoration: InputDecoration(
+                                          filled: true,
+                                          fillColor: Colors.white30,
+                                          contentPadding:
+                                              const EdgeInsets.symmetric(
+                                                  vertical: 2),
+                                          hintText: "Translation",
+                                          focusedBorder: OutlineInputBorder(
+                                            borderRadius:
+                                                BorderRadius.circular(25.0),
+                                            borderSide: BorderSide(
+                                              color: Colors.white,
+                                            ),
+                                          ),
+                                          enabledBorder: OutlineInputBorder(
+                                            borderRadius:
+                                                BorderRadius.circular(25.0),
+                                            borderSide: BorderSide(
+                                              color: Colors.white,
+                                              width: 0.0,
+                                            ),
                                           ),
                                         ),
-                                        enabledBorder: OutlineInputBorder(
-                                          borderRadius:
-                                              BorderRadius.circular(25.0),
-                                          borderSide: BorderSide(
-                                            color: Colors.white,
-                                            width: 0.0,
-                                          ),
-                                        ),
-                                      ),
-                                      style: TextStyle(
-                                          fontSize: 20,
-                                          fontFamily: "lato",
-                                          fontWeight: FontWeight.bold,
-                                          color: Colors.grey),
-                                      textAlign: TextAlign.center,
-                                      onChanged: (value) {}),
-                                )))),
+                                        style: TextStyle(
+                                            fontSize: 20,
+                                            fontFamily: "lato",
+                                            fontWeight: FontWeight.bold,
+                                            color: Colors.grey),
+                                        textAlign: TextAlign.center,
+                                        onChanged: (value) {}),
+                                  )))),
+                        ),
                         Container(
                           padding: const EdgeInsets.only(top: 50),
                           child: Row(
@@ -255,7 +262,13 @@ class MyQuizState extends State<MyQuiz> with SingleTickerProviderStateMixin {
                                 child: ElevatedButton(
                                     onPressed: () {
                                       setState(() {
+                                        SaveAnswers(
+                                            _textController.text,
+                                            data["toTranslateWord"],
+                                            data["germanWord"],
+                                            usedtip);
                                         incrementCounter();
+                                        usedtip = false;
                                       });
                                       ;
                                     },
@@ -299,8 +312,34 @@ class MyQuizState extends State<MyQuiz> with SingleTickerProviderStateMixin {
                       ]),
                 );
               } else {
+                addtodb();
                 return Center(child: Text("Please Add Vocabs first"));
               }
             })));
+  }
+
+  void SaveAnswers(answer, rightanswer, germanWord, usedtip) {
+    var answeristright = false;
+    if (answer.toLowerCase() == rightanswer.toLowerCase())
+      answeristright = true;
+    Map toadd = {
+      "answer": answer.toLowerCase(),
+      "rightanswer": rightanswer.toLowerCase(),
+      "germanWord": germanWord,
+      "answerRight": answeristright.toString(),
+      "usedtip": usedtip,
+      "timestamp": DateTime.now(),
+      "session": sessionkey
+    };
+
+    answers.add(toadd);
+  }
+
+  void addtodb() {
+    CollectionReference ref = FirebaseFirestore.instance
+        .collection("Students")
+        .doc(FirebaseAuth.instance.currentUser!.uid)
+        .collection("Tests");
+    ref.add(answers);
   }
 }

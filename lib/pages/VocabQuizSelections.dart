@@ -28,6 +28,9 @@ class MyCreateQuizWidgetState extends State<MyCreateQuizWidget> {
   late List<String> alphabets = new List<int>.generate(10, (i) => i + 1)
       .map((e) => e.toString())
       .toList();
+  late List<String> alphabets2 = new List<int>.generate(100, (i) => i + 5)
+      .map((e) => e.toString())
+      .toList();
   var selectedCurrency, selectedType;
 
   List<String?> result = List.filled(2, "0");
@@ -127,7 +130,7 @@ class MyCreateQuizWidgetState extends State<MyCreateQuizWidget> {
                           result[1] = p0;
                         });
                       },
-                      data: alphabets.map((e) => e + " pcs").toList(),
+                      data: alphabets2.map((e) => e + " pcs").toList(),
                     ),
                   ),
                 ],

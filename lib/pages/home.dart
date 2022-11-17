@@ -7,10 +7,13 @@ import 'package:flutter_circular_text/circular_text.dart';
 import 'package:liquid_swipe/liquid_swipe.dart';
 import 'package:flag/flag.dart';
 import 'loginscreen.dart';
+import 'package:convex_bottom_bar/convex_bottom_bar.dart';
 import "startingpage.dart";
+import 'MyEditVocabs.dart';
 import "AddVocabs.dart";
 import "AskVocabs.dart";
 import "Settings.dart";
+import 'ManageVocabs.dart';
 
 class MyHomeWidget extends StatefulWidget {
   const MyHomeWidget({super.key});
@@ -35,6 +38,7 @@ class MyHomeWidgetState extends State<MyHomeWidget> {
     MyStartingPageWidget(),
     MyAddVocabsWidget(),
     MyAskVocabsWidget(),
+    MyManageVocabsWidget(),
     MySettingsWidget()
   ];
   @override
@@ -100,13 +104,17 @@ class MyHomeWidgetState extends State<MyHomeWidget> {
                   label: 'Home',
                 ),
                 BottomNavigationBarItem(
-                    icon: Icon(Icons.edit_rounded),
+                    icon: Icon(Icons.add_outlined),
                     backgroundColor: Color(0xffA1CAD0),
-                    label: "Edit"),
+                    label: "Add"),
                 BottomNavigationBarItem(
                     icon: Icon(Icons.auto_stories_rounded),
                     backgroundColor: Color(0xffA1CAD0),
                     label: "Learn"),
+                BottomNavigationBarItem(
+                    icon: Icon(Icons.edit_outlined),
+                    backgroundColor: Color(0xffA1CAD0),
+                    label: "Edit"),
                 BottomNavigationBarItem(
                     icon: Icon(Icons.settings_rounded),
                     backgroundColor: Color(0xffA1CAD0),
