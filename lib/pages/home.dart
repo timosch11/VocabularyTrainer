@@ -14,6 +14,7 @@ import "AddVocabs.dart";
 import "AskVocabs.dart";
 import "Settings.dart";
 import 'ManageVocabs.dart';
+import "try.dart";
 
 class MyHomeWidget extends StatefulWidget {
   const MyHomeWidget({super.key});
