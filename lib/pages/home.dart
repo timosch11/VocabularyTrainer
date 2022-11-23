@@ -117,9 +117,9 @@ class MyHomeWidgetState extends State<MyHomeWidget> {
                     backgroundColor: Color(0xffA1CAD0),
                     label: "Edit"),
                 BottomNavigationBarItem(
-                    icon: Icon(Icons.settings_rounded),
+                    icon: Icon(Icons.person_outline_sharp),
                     backgroundColor: Color(0xffA1CAD0),
-                    label: "Settings"),
+                    label: "Profil"),
               ],
             )));
   }
