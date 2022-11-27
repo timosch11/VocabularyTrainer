@@ -37,9 +37,9 @@ class MyEditWidgetState extends State<MyEditWidget> {
             List<String> curr = [];
             for (int i = 0; i < snapshot.data!.docs.length; i++) {
               var snap = snapshot.data!.docs[i]["category"];
-              print("Here:" + FirebaseAuth.instance.currentUser!.uid);
 
-              if (curr.contains(snap) == false) {
+              if (curr.contains(snap) == false &&
+                  snapshot.data!.docs[i]["germanWord"] != "dummy") {
                 curr.add(snapshot.data!.docs[i]["category"]);
               }
             }

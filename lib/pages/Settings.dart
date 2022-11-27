@@ -64,18 +64,8 @@ class MySettingsWidgetState extends State<MySettingsWidget> {
               press: () => {},
             ),
             ProfileMenu(
-              text: "Notifications",
-              icon: "assets/images/Bell.svg",
-              press: () {},
-            ),
-            ProfileMenu(
               text: "Settings",
               icon: "assets/images/Settings.svg",
-              press: () {},
-            ),
-            ProfileMenu(
-              text: "Help Center",
-              icon: "assets/images/Question mark.svg",
               press: () {},
             ),
             ProfileMenu(

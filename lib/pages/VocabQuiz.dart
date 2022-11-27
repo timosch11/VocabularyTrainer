@@ -34,11 +34,12 @@ class MyQuizState extends State<MyQuiz> with SingleTickerProviderStateMixin {
   final TextEditingController _textController = new TextEditingController();
   int endTime = 0;
   var answers = List.empty(growable: true);
-
+  int NoOfVocabs = 1;
   var sessionkey = UniqueKey().toString();
   @override
   void initState() {
     endTime = DateTime.now().millisecondsSinceEpoch + 1000 * widget.time * 60;
+    var NoOfVocabs = widget.NoOfVocabs;
     super.initState();
     _animationController =
         AnimationController(vsync: this, duration: Duration(milliseconds: 500));
@@ -73,10 +74,60 @@ class MyQuizState extends State<MyQuiz> with SingleTickerProviderStateMixin {
     counter_++;
   }
 
+  void setCounter(value) {
+    counter_ = value;
+  }
+
   void decrementCounter() {
     counter_--;
   }
 
+  List<Container> return_icon_list_view(answeristright, icon_list) {
+    print(answeristright);
+    if (answeristright == true) {
+      icon_list[counter_] = Container(
+          padding: EdgeInsets.symmetric(horizontal: 1),
+          height: 30,
+          width: 30,
+          alignment: Alignment.centerLeft,
+          child: IconButton(
+            alignment: Alignment.centerLeft,
+            icon: Icon(Icons.check_box),
+            iconSize: 20,
+            color: Colors.green,
+            onPressed: () {},
+          ));
+    } else {
+      icon_list[counter_] = Container(
+          padding: EdgeInsets.symmetric(horizontal: 1),
+          height: 30,
+          width: 30,
+          alignment: Alignment.centerLeft,
+          child: IconButton(
+            alignment: Alignment.centerLeft,
+            icon: Icon(Icons.cancel_presentation_sharp),
+            iconSize: 20,
+            color: Colors.red,
+            onPressed: () {},
+          ));
+    }
+    return icon_list;
+  }
+
+  List<Container> icon_list = new List.filled(
+      10,
+      Container(
+          padding: EdgeInsets.symmetric(horizontal: 1),
+          height: 30,
+          width: 30,
+          alignment: Alignment.center,
+          child: IconButton(
+            alignment: Alignment.center,
+            icon: Icon(Icons.question_mark_sharp),
+            iconSize: 20,
+            onPressed: () {},
+          )),
+      growable: true);
   @override
   Widget build(BuildContext context) {
     final isKeyboard = MediaQuery.of(context).viewInsets.bottom != 0;
@@ -85,10 +136,9 @@ class MyQuizState extends State<MyQuiz> with SingleTickerProviderStateMixin {
         body: FutureBuilder<QuerySnapshot>(
             future: ref.get(),
             builder: ((context, snapshot) {
-              //Map? data = snapshot.data?.docs[counter_].data() as Map?;
               var data2 = snapshot.data!.docs;
               List dat = [];
-
+              print(icon_list.length);
               for (int i = 0; i <= data2!.length - 1; i++) {
                 if (data2[i]["category"] == widget.category &&
                     data2[i]["toTranslateWord"] != "dummy") {
@@ -99,7 +149,7 @@ class MyQuizState extends State<MyQuiz> with SingleTickerProviderStateMixin {
                 counter_ = dat.length - 1;
               }
               Map? data = dat[counter_].data() as Map?;
-              print(counter_);
+
               if (snapshot.hasData && counter_ != dat.length - 1) {
                 String hint = "";
                 for (int i = 0; i < data!["toTranslateWord"].length; i++) {
@@ -126,6 +176,57 @@ class MyQuizState extends State<MyQuiz> with SingleTickerProviderStateMixin {
                                 fontWeight: FontWeight.bold),
                           )
                         ]),
+                        Divider(),
+                        Container(
+                          child: SizedBox(
+                              height: 60,
+                              child: Container(
+                                // height: double.infinity,
+                                // width: double.infinity,
+
+                                child: Align(
+                                  child: ListView.builder(
+                                    scrollDirection: Axis.horizontal,
+                                    padding:
+                                        EdgeInsets.symmetric(horizontal: 10),
+                                    itemCount: icon_list.length,
+                                    itemBuilder: (context, index) {
+                                      return Row(
+                                        children: [
+                                          Column(
+                                            mainAxisAlignment:
+                                                MainAxisAlignment.center,
+                                            crossAxisAlignment:
+                                                CrossAxisAlignment.center,
+                                            children: [
+                                              SizedBox(
+                                                  width: 30,
+                                                  child: InkWell(
+                                                    child: Text(
+                                                      "  ${(index + 1).toString()}",
+                                                      textAlign:
+                                                          TextAlign.center,
+                                                    ),
+                                                    onTap: () {
+                                                      setState(() {
+                                                        setCounter(index);
+                                                      });
+                                                    },
+                                                  )),
+                                              SizedBox(
+                                                  width: 30,
+                                                  child: icon_list[index]),
+                                            ],
+                                          ),
+                                          VerticalDivider()
+                                        ],
+                                      );
+                                    },
+                                    shrinkWrap: true,
+                                  ),
+                                ),
+                              )),
+                        ),
                         Container(
                           padding: const EdgeInsets.symmetric(vertical: 30),
                           child: Transform(
@@ -134,6 +235,10 @@ class MyQuizState extends State<MyQuiz> with SingleTickerProviderStateMixin {
                                 ..rotateY(pi * _animation.value * 2),
                               child: GestureDetector(
                                   onTap: () {
+                                    for (int i = 0; i <= 3; i++) {
+                                      print(icon_list[i].child);
+                                      print(i);
+                                    }
                                     usedtip = true;
                                     if (_animationStatus ==
                                         AnimationStatus.dismissed) {
@@ -145,7 +250,7 @@ class MyQuizState extends State<MyQuiz> with SingleTickerProviderStateMixin {
                                   child: _animation.value >= 0.5
                                       ? Container(
                                           color: Color(0xffA1CAD0),
-                                          height: 200,
+                                          height: 180,
                                           width: 300,
                                           child: Card(
                                               color: Color(0xffA1CAD0),
@@ -160,7 +265,7 @@ class MyQuizState extends State<MyQuiz> with SingleTickerProviderStateMixin {
                                         )
                                       : Container(
                                           color: Color(0xffA1CAD0),
-                                          height: 200,
+                                          height: 180,
                                           width: 300,
                                           child: Card(
                                               color: Color(0xffA1CAD0),
@@ -176,11 +281,10 @@ class MyQuizState extends State<MyQuiz> with SingleTickerProviderStateMixin {
                                         ))),
                         ),
                         Divider(),
-                        Divider(),
                         Expanded(
                           child: Container(
                               color: Color(0xffA1CAD0),
-                              height: 200,
+                              height: 180,
                               width: 300,
                               child: Card(
                                   color: Color(0xffA1CAD0),
@@ -221,7 +325,7 @@ class MyQuizState extends State<MyQuiz> with SingleTickerProviderStateMixin {
                                   )))),
                         ),
                         Container(
-                          padding: const EdgeInsets.only(top: 50),
+                          padding: const EdgeInsets.only(top: 30),
                           child: Row(
                             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                             children: [
@@ -267,10 +371,27 @@ class MyQuizState extends State<MyQuiz> with SingleTickerProviderStateMixin {
                                             data["toTranslateWord"],
                                             data["germanWord"],
                                             usedtip);
-                                        incrementCounter();
+
                                         usedtip = false;
                                       });
                                       ;
+                                      setState(() {
+                                        var answeristright = false;
+                                        if (data["toTranslateWord"]
+                                                .toLowerCase() ==
+                                            _textController.text.toLowerCase())
+                                          answeristright = true;
+                                        print(data["toTranslateWord"]);
+                                        print(
+                                            _textController.text.toLowerCase());
+
+                                        icon_list = return_icon_list_view(
+                                            answeristright, icon_list);
+                                      });
+                                      _textController.clear();
+                                      incrementCounter();
+
+                                      var answeristright = false;
                                     },
                                     child: Row(
                                       mainAxisAlignment: MainAxisAlignment.end,
@@ -322,6 +443,7 @@ class MyQuizState extends State<MyQuiz> with SingleTickerProviderStateMixin {
     var answeristright = false;
     if (answer.toLowerCase() == rightanswer.toLowerCase())
       answeristright = true;
+
     Map toadd = {
       "answer": answer.toLowerCase(),
       "rightanswer": rightanswer.toLowerCase(),
