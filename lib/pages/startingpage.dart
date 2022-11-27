@@ -30,7 +30,7 @@ class MyStartingPageWidgetState extends State<MyStartingPageWidget> {
   void initState() {
     super.initState();
     dbRef = FirebaseDatabase.instance.ref().child("Student");
-    controller.play();
+    //controller.play();
     fetchTranslation();
   }
 

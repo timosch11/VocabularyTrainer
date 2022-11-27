@@ -10,6 +10,7 @@ Future<void> main() async {
     return SizedBox.shrink();
   };
   WidgetsFlutterBinding.ensureInitialized();
+
   await Firebase.initializeApp();
   runApp(MaterialApp(home: MyLoginWidget()));
 }

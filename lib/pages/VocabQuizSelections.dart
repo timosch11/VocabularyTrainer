@@ -59,7 +59,8 @@ class MyCreateQuizWidgetState extends State<MyCreateQuizWidget> {
                         var snap = snapshot.data!.docs[i]["category"];
                         print("Here:" + FirebaseAuth.instance.currentUser!.uid);
 
-                        if (curr.contains(snap) == false) {
+                        if (curr.contains(snap) == false &&
+                            snapshot.data!.docs[i]["germanWord"] != "dummy") {
                           curr.add(snapshot.data!.docs[i]["category"]);
                           currencyItems.add(
                             DropdownMenuItem(
@@ -143,12 +144,14 @@ class MyCreateQuizWidgetState extends State<MyCreateQuizWidget> {
                   style: ElevatedButton.styleFrom(
                       backgroundColor: Color(0xffA1CAD0)),
                   onPressed: () {
+                    print("result");
+                    print(result);
                     var category = selectedCurrency;
                     widget.getCategory(category);
                     widget.getTimespan(int.parse(
                         result[0]!.substring(0, result[0]!.length - 4)));
                     widget.getNoOfVocs(int.parse(
-                        result[0]!.substring(0, result[1]!.length - 4)));
+                        result[1]!.substring(0, result[1]!.length - 4)));
                     widget.incrementCounter();
                   },
                   child: Text(

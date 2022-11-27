@@ -40,10 +40,11 @@ class MyQuizState extends State<MyQuiz> with SingleTickerProviderStateMixin {
   var answers = List.empty(growable: true);
   int NoOfVocabs = 1;
   var sessionkey = UniqueKey().toString();
+
   @override
   void initState() {
     endTime = DateTime.now().millisecondsSinceEpoch + 1000 * widget.time * 60;
-    var NoOfVocabs = widget.NoOfVocabs;
+
     super.initState();
     _animationController =
         AnimationController(vsync: this, duration: Duration(milliseconds: 500));
@@ -54,6 +55,7 @@ class MyQuizState extends State<MyQuiz> with SingleTickerProviderStateMixin {
       ..addStatusListener((status) {
         _animationStatus = status;
       });
+    final NoOfVocabs = widget.NoOfVocabs;
   }
 
   CollectionReference ref = FirebaseFirestore.instance
@@ -117,8 +119,9 @@ class MyQuizState extends State<MyQuiz> with SingleTickerProviderStateMixin {
     return icon_list;
   }
 
+  // ignore: unnecessary_new
   List<Container> icon_list = new List.filled(
-      10,
+      100,
       Container(
           padding: EdgeInsets.symmetric(horizontal: 1),
           height: 30,
@@ -133,13 +136,15 @@ class MyQuizState extends State<MyQuiz> with SingleTickerProviderStateMixin {
       growable: true);
   @override
   Widget build(BuildContext context) {
+    var NoOfVocabs = widget.NoOfVocabs;
+    print(NoOfVocabs);
     final isKeyboard = MediaQuery.of(context).viewInsets.bottom != 0;
 
     return Scaffold(
         body: FutureBuilder<QuerySnapshot>(
             future: ref.get(),
             builder: ((context, snapshot) {
-              var data2 = snapshot.data!.docs;
+              var data2 = snapshot.data?.docs;
               List dat = [];
 
               for (int i = 0; i <= data2!.length - 1; i++) {
@@ -151,9 +156,12 @@ class MyQuizState extends State<MyQuiz> with SingleTickerProviderStateMixin {
               if (counter >= dat.length - 1) {
                 counter_ = dat.length - 1;
               }
+
               Map? data = dat[counter_].data() as Map?;
 
-              if (snapshot.hasData && counter_ != dat.length - 1) {
+              if (snapshot.hasData &&
+                  counter_ != dat.length - 1 &&
+                  counter_ <= widget.NoOfVocabs) {
                 print(counter_);
                 String hint = "";
                 for (int i = 0; i < data!["toTranslateWord"].length; i++) {
