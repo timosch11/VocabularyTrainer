@@ -117,7 +117,6 @@ class MyCreateQuizWidgetState extends State<MyCreateQuizWidget> {
                       callback: (p0) {
                         setState(() {
                           result[0] = p0;
-                          var time = p0;
                         });
                       },
                       data: alphabets.map((e) => e + " min").toList(),
@@ -152,7 +151,7 @@ class MyCreateQuizWidgetState extends State<MyCreateQuizWidget> {
                     widget.incrementCounter();
                   },
                   child: Text(
-                      "Start ${result[0]} min long test with ${result[1]} vocabs"),
+                      "Start ${result[0]} long test with ${result[1]} vocabs"),
                 ))
           ],
         ),
