@@ -38,7 +38,7 @@ class MyQuizState extends State<MyQuiz> with SingleTickerProviderStateMixin {
   final TextEditingController _textController = new TextEditingController();
   int endTime = 0;
   var answers = List.empty(growable: true);
-  int NoOfVocabs = 1;
+  int NoOfVocabs = 0;
   var sessionkey = UniqueKey().toString();
 
   @override
@@ -687,7 +687,7 @@ class MyQuizState extends State<MyQuiz> with SingleTickerProviderStateMixin {
     List results = List.empty(growable: true);
     int correct = 0;
     int total = 0;
-    for (int i = 0; i < askedvocbs.length; i++) {
+    for (int i = 0; i < askedvocbs.length-1; i++) {
       total++;
       if (askedvocbs[i]["answerRight"].toString() == "true") {
         correct++;

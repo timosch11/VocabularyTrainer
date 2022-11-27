@@ -71,7 +71,7 @@ class _MyRegisterWidgetState extends State<MyRegWidget> {
                       onChanged: (String value) {},
                       validator: (value) {
                         return value!.isEmpty
-                            ? "Bitte gebe hier deine e-mail Adresse an"
+                            ? "Bitte gebe hier deine E-Mail Adresse an"
                             : null;
                       },
                     ),
@@ -102,7 +102,7 @@ class _MyRegisterWidgetState extends State<MyRegWidget> {
                       keyboardType: TextInputType.emailAddress,
                       decoration: InputDecoration(
                           labelText: textfordate,
-                          hintText: "Gebe hier dein Geburtsdatum an",
+                          hintText: "Bitte gebe hier dein Geburtsdatum an",
                           prefixIcon: Icon(Icons.date_range),
                           border: OutlineInputBorder()),
                       onChanged: (String value) {},
@@ -143,7 +143,7 @@ class _MyRegisterWidgetState extends State<MyRegWidget> {
                       },
                       validator: (value) {
                         return value!.isEmpty
-                            ? "Bitte gebe hier deine e-mail Adresse an"
+                            ? "Bitte gebe hier deine E-Mail Adresse an"
                             : null;
                       },
                     ),
@@ -158,7 +158,7 @@ class _MyRegisterWidgetState extends State<MyRegWidget> {
                       keyboardType: TextInputType.visiblePassword,
                       decoration: InputDecoration(
                           labelText: "Password",
-                          hintText: "Nun musst du nurnoch ein Passwort wählen",
+                          hintText: "Nun musst du nur noch ein Passwort wählen",
                           prefixIcon: Icon(Icons.password),
                           border: OutlineInputBorder()),
                       onChanged: (String value) {},

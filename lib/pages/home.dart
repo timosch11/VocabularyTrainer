@@ -76,7 +76,7 @@ class MyHomeWidgetState extends State<MyHomeWidget> {
                   Container(
                       padding: const EdgeInsets.all(8.0),
                       child:
-                          Text("PineAPPulary")),//Text("${user.displayName.toString().toUpperCase()}")),
+                          Text("PineAPPulary")),
                   Flag.fromCode(
                     FlagsCode.GB,
                     width: 45,
