@@ -1,9 +1,11 @@
+import 'dart:convert';
 import 'dart:io';
-
+import 'package:confetti/confetti.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'dart:math';
+import 'package:chat_bubbles/chat_bubbles.dart';
 import 'package:flutter_countdown_timer/flutter_countdown_timer.dart';
 import 'package:percent_indicator/percent_indicator.dart';
 
@@ -29,6 +31,8 @@ var usedtip = false;
 class MyQuizState extends State<MyQuiz> with SingleTickerProviderStateMixin {
   late AnimationController _animationController;
   late Animation<double> _animation;
+  bool isPlaying = false;
+  final controller = ConfettiController(duration: const Duration(seconds: 2));
   var counter_ = 0;
   AnimationStatus _animationStatus = AnimationStatus.dismissed;
   final TextEditingController _textController = new TextEditingController();
@@ -57,7 +61,7 @@ class MyQuizState extends State<MyQuiz> with SingleTickerProviderStateMixin {
       .doc(FirebaseAuth.instance.currentUser!.uid)
       .collection("Vocabs");
   int counter = 0;
-
+  List askedvocbs = List.empty(growable: true);
   List myColors = [
     Colors.yellow[200],
     Colors.red[200],
@@ -83,7 +87,6 @@ class MyQuizState extends State<MyQuiz> with SingleTickerProviderStateMixin {
   }
 
   List<Container> return_icon_list_view(answeristright, icon_list) {
-    print(answeristright);
     if (answeristright == true) {
       icon_list[counter_] = Container(
           padding: EdgeInsets.symmetric(horizontal: 1),
@@ -138,7 +141,7 @@ class MyQuizState extends State<MyQuiz> with SingleTickerProviderStateMixin {
             builder: ((context, snapshot) {
               var data2 = snapshot.data!.docs;
               List dat = [];
-              print(icon_list.length);
+
               for (int i = 0; i <= data2!.length - 1; i++) {
                 if (data2[i]["category"] == widget.category &&
                     data2[i]["toTranslateWord"] != "dummy") {
@@ -151,6 +154,7 @@ class MyQuizState extends State<MyQuiz> with SingleTickerProviderStateMixin {
               Map? data = dat[counter_].data() as Map?;
 
               if (snapshot.hasData && counter_ != dat.length - 1) {
+                print(counter_);
                 String hint = "";
                 for (int i = 0; i < data!["toTranslateWord"].length; i++) {
                   if (i.isEven) {
@@ -235,10 +239,6 @@ class MyQuizState extends State<MyQuiz> with SingleTickerProviderStateMixin {
                                 ..rotateY(pi * _animation.value * 2),
                               child: GestureDetector(
                                   onTap: () {
-                                    for (int i = 0; i <= 3; i++) {
-                                      print(icon_list[i].child);
-                                      print(i);
-                                    }
                                     usedtip = true;
                                     if (_animationStatus ==
                                         AnimationStatus.dismissed) {
@@ -366,24 +366,23 @@ class MyQuizState extends State<MyQuiz> with SingleTickerProviderStateMixin {
                                 child: ElevatedButton(
                                     onPressed: () {
                                       setState(() {
-                                        SaveAnswers(
-                                            _textController.text,
-                                            data["toTranslateWord"],
-                                            data["germanWord"],
-                                            usedtip);
-
+                                        Map<String, dynamic> toadd =
+                                            SaveAnswers(
+                                                _textController.text,
+                                                data["toTranslateWord"],
+                                                data["germanWord"],
+                                                usedtip);
+                                        askedvocbs.add(toadd);
                                         usedtip = false;
                                       });
                                       ;
+
                                       setState(() {
                                         var answeristright = false;
                                         if (data["toTranslateWord"]
                                                 .toLowerCase() ==
                                             _textController.text.toLowerCase())
                                           answeristright = true;
-                                        print(data["toTranslateWord"]);
-                                        print(
-                                            _textController.text.toLowerCase());
 
                                         icon_list = return_icon_list_view(
                                             answeristright, icon_list);
@@ -433,18 +432,290 @@ class MyQuizState extends State<MyQuiz> with SingleTickerProviderStateMixin {
                       ]),
                 );
               } else {
-                addtodb();
-                return Center(child: Text("Please Add Vocabs first"));
+                //addtodb();
+                var corrects = getNoOfCorrectAnswers();
+                Color col = corrects[4];
+                if (corrects[3] == "A" || corrects[3] == "B") {
+                  controller.play();
+                }
+                return Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    children: [
+                      ConfettiWidget(
+                        confettiController: controller,
+                        shouldLoop: false,
+                        //maxBlastForce: 100,
+                        //minBlastForce: 80,
+                        emissionFrequency: 0.5,
+                        blastDirectionality: BlastDirectionality.explosive,
+                      ),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        children: [
+                          if (!isKeyboard)
+                            Image(
+                                image: AssetImage('assets/images/logo.png'),
+                                width: 144,
+                                height: 185),
+                          if (!isKeyboard)
+                            BubbleSpecialThree(
+                              text: 'You are doing\n great! :)',
+                              color: Color(0xffA1CAD0),
+                              tail: true,
+                              isSender: false,
+                              textStyle:
+                                  TextStyle(color: Colors.white, fontSize: 25),
+                            ),
+                        ],
+                      ),
+                      Divider(),
+                      Container(
+                        width: 300,
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(12),
+                          color: Colors.white,
+                          boxShadow: [
+                            BoxShadow(
+                              color: Colors.grey.withOpacity(0.5),
+                              spreadRadius: 5,
+                              blurRadius: 7,
+                              offset: Offset(0, 3),
+                            ),
+                          ],
+                        ),
+                        child: Column(
+                          children: [
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              crossAxisAlignment: CrossAxisAlignment.center,
+                              children: [
+                                Container(
+                                  child: Icon(Icons.check_box,
+                                      size: 30, color: Colors.greenAccent),
+                                  padding: const EdgeInsets.all(12),
+                                ),
+                                Text(
+                                  corrects[0].toString(),
+                                  style: TextStyle(
+                                      fontSize: 20,
+                                      fontWeight: FontWeight.bold),
+                                )
+                              ],
+                            ),
+                            Container(
+                              width: 300,
+                              decoration: const BoxDecoration(
+                                  color: Color(0xffA1CAD0),
+                                  borderRadius: BorderRadius.only(
+                                      bottomRight: Radius.circular(12),
+                                      bottomLeft: Radius.circular(12))),
+                              child: Text(
+                                "Right Answers",
+                                textAlign: TextAlign.center,
+                              ),
+                              padding: const EdgeInsets.all(12),
+                            )
+                          ],
+                        ),
+                      ),
+                      Divider(),
+                      Container(
+                        width: 300,
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(12),
+                          color: Colors.white,
+                          boxShadow: [
+                            BoxShadow(
+                              color: Colors.grey.withOpacity(0.5),
+                              spreadRadius: 5,
+                              blurRadius: 7,
+                              offset: Offset(0, 3),
+                            ),
+                          ],
+                        ),
+                        child: Column(
+                          children: [
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              crossAxisAlignment: CrossAxisAlignment.center,
+                              children: [
+                                Container(
+                                  child: Icon(Icons.format_align_left_sharp,
+                                      size: 30, color: Colors.blueAccent),
+                                  padding: const EdgeInsets.all(12),
+                                ),
+                                Text(
+                                  corrects[1].toString(),
+                                  style: TextStyle(
+                                      fontSize: 20,
+                                      fontWeight: FontWeight.bold),
+                                )
+                              ],
+                            ),
+                            Container(
+                              width: 300,
+                              decoration: const BoxDecoration(
+                                  color: Color(0xffA1CAD0),
+                                  borderRadius: BorderRadius.only(
+                                      bottomRight: Radius.circular(12),
+                                      bottomLeft: Radius.circular(12))),
+                              child: Text(
+                                "Total Vocabularies",
+                                textAlign: TextAlign.center,
+                              ),
+                              padding: const EdgeInsets.all(12),
+                            )
+                          ],
+                        ),
+                      ),
+                      Divider(),
+                      Container(
+                        width: 300,
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(12),
+                          color: Colors.white,
+                          boxShadow: [
+                            BoxShadow(
+                              color: Colors.grey.withOpacity(0.5),
+                              spreadRadius: 5,
+                              blurRadius: 7,
+                              offset: Offset(0, 3),
+                            ),
+                          ],
+                        ),
+                        child: Column(
+                          children: [
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              crossAxisAlignment: CrossAxisAlignment.center,
+                              children: [
+                                Container(
+                                  child: Icon(Icons.person,
+                                      size: 30, color: Colors.blueAccent),
+                                  padding: const EdgeInsets.all(12),
+                                ),
+                                Text(
+                                  "${corrects[2].toString()} %",
+                                  style: TextStyle(
+                                      fontSize: 20,
+                                      fontWeight: FontWeight.bold),
+                                )
+                              ],
+                            ),
+                            Container(
+                              width: 300,
+                              decoration: const BoxDecoration(
+                                  color: Color(0xffA1CAD0),
+                                  borderRadius: BorderRadius.only(
+                                      bottomRight: Radius.circular(12),
+                                      bottomLeft: Radius.circular(12))),
+                              child: Text(
+                                "Accomplished",
+                                textAlign: TextAlign.center,
+                              ),
+                              padding: const EdgeInsets.all(12),
+                            )
+                          ],
+                        ),
+                      ),
+                      Divider(),
+                      Container(
+                        width: 300,
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(12),
+                          color: col,
+                          boxShadow: [
+                            BoxShadow(
+                              color: Colors.grey.withOpacity(0.5),
+                              spreadRadius: 5,
+                              blurRadius: 7,
+                              offset: Offset(0, 3),
+                            ),
+                          ],
+                        ),
+                        child: Column(
+                          children: [
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              crossAxisAlignment: CrossAxisAlignment.center,
+                              children: [
+                                Container(
+                                  child: Icon(Icons.school_rounded,
+                                      size: 30, color: Colors.blueAccent),
+                                  padding: const EdgeInsets.all(12),
+                                ),
+                                Text(
+                                  "${corrects[3].toString()}",
+                                  style: TextStyle(
+                                      fontSize: 20,
+                                      fontWeight: FontWeight.bold),
+                                )
+                              ],
+                            ),
+                            Container(
+                              width: 300,
+                              decoration: const BoxDecoration(
+                                  color: Color(0xffA1CAD0),
+                                  borderRadius: BorderRadius.only(
+                                      bottomRight: Radius.circular(12),
+                                      bottomLeft: Radius.circular(12))),
+                              child: Text(
+                                "Rating",
+                                textAlign: TextAlign.center,
+                              ),
+                              padding: const EdgeInsets.all(12),
+                            )
+                          ],
+                        ),
+                      ),
+                    ]);
               }
             })));
   }
 
-  void SaveAnswers(answer, rightanswer, germanWord, usedtip) {
+  List getNoOfCorrectAnswers() {
+    List results = List.empty(growable: true);
+    int correct = 0;
+    int total = 0;
+    for (int i = 0; i < askedvocbs.length; i++) {
+      total++;
+      if (askedvocbs[i]["answerRight"].toString() == "true") {
+        correct++;
+      }
+    }
+    String rating = "A";
+    results.add(correct);
+    results.add(total);
+    Color col = Colors.greenAccent;
+    results.add(((correct / total) * 100).round());
+    if (results[2] == 100) {
+      rating = "A";
+    } else if (results[2] >= 75) {
+      rating = "B";
+      col = Colors.lightGreen;
+    } else if (results[2] >= 50) {
+      rating = "C";
+      col = Colors.yellow;
+    } else if (results[2] >= 25) {
+      rating = "D";
+      col = Colors.yellowAccent;
+    } else {
+      rating = "E";
+      col = Colors.redAccent;
+    }
+    results.add(rating);
+    results.add(col);
+    return results;
+  }
+
+  Map<String, dynamic> SaveAnswers(answer, rightanswer, germanWord, usedtip) {
     var answeristright = false;
     if (answer.toLowerCase() == rightanswer.toLowerCase())
       answeristright = true;
 
-    Map toadd = {
+    Map<String, dynamic> toadd = {
       "answer": answer.toLowerCase(),
       "rightanswer": rightanswer.toLowerCase(),
       "germanWord": germanWord,
@@ -455,6 +726,7 @@ class MyQuizState extends State<MyQuiz> with SingleTickerProviderStateMixin {
     };
 
     answers.add(toadd);
+    return toadd;
   }
 
   void addtodb() {
@@ -462,6 +734,8 @@ class MyQuizState extends State<MyQuiz> with SingleTickerProviderStateMixin {
         .collection("Students")
         .doc(FirebaseAuth.instance.currentUser!.uid)
         .collection("Tests");
-    ref.add(answers);
+    for (int i = 0; i < answers.length; i++) {
+      ref.add(answers[i]);
+    }
   }
 }
