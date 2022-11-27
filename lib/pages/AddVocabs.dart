@@ -56,15 +56,12 @@ class MyAddVocabsWidgetState extends State<MyAddVocabsWidget> {
                                 hintText: "Add Category",
                                 focusedBorder: OutlineInputBorder(
                                   borderRadius: BorderRadius.circular(25.0),
-                                  borderSide: BorderSide(
-                                    color: Colors.blue,
-                                  ),
                                 ),
                                 enabledBorder: OutlineInputBorder(
                                   borderRadius: BorderRadius.circular(25.0),
                                   borderSide: BorderSide(
-                                    color: Colors.blue,
-                                    width: 0.0,
+                                    color: Color(0xffA1CAD0),
+                                    width: 2.0,
                                   ),
                                 ),
                               ),

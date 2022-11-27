@@ -83,7 +83,7 @@ class BarChartSample1State extends State<BarChartSample1> {
                   elevation: 18.0,
                   shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(18)),
-                  color: const Color(0xffe4c7b7),
+                  color: Color.fromARGB(255, 252, 185, 149),
                   child: Stack(
                     children: <Widget>[
                       Padding(
@@ -94,7 +94,7 @@ class BarChartSample1State extends State<BarChartSample1> {
                             const Text(
                               'Your Progress',
                               style: TextStyle(
-                                color: Color(0xff0f4a3c),
+                                color: const Color(0xff1d4e89),
                                 fontSize: 24,
                                 fontWeight: FontWeight.bold,
                               ),
@@ -138,7 +138,7 @@ class BarChartSample1State extends State<BarChartSample1> {
                           child: IconButton(
                             icon: Icon(
                               isPlaying ? Icons.pause : Icons.play_arrow,
-                              color: const Color(0xff0f4a3c),
+                              color: const Color(0xff1d4e89),
                             ),
                             onPressed: () {
                               setState(() {
