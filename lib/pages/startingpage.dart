@@ -193,7 +193,7 @@ Future fetchFact() async {
   if (connectivityResult == ConnectivityResult.mobile ||
       connectivityResult == ConnectivityResult.wifi) {
     final response = await http.get(Uri.parse(
-        "http://randomuselessfact.appspot.com/today.txt?language=de"));
+        "http://randomuselessfact.appspot.com/today.txt?language=en"));
     if (response.statusCode == 200)
       return response.body.toString();
     else
@@ -207,6 +207,6 @@ Future fetchTranslation() async {
   var fact = await fetchFact();
   fact = fact.substring(2, fact.indexOf('Source:'));
   print(fact);
-  var translation = await translator.translate(fact.toString(), to: 'en');
+  var translation = await translator.translate(fact.toString(), to: 'de');
   return translation;
 }

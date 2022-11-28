@@ -75,7 +75,7 @@ class MyQuizState extends State<MyQuiz> with SingleTickerProviderStateMixin {
     Colors.tealAccent[200],
     Colors.pink[200],
   ];
-
+  bool timeron = false;
   void incrementCounter() {
     counter_++;
   }
@@ -88,6 +88,7 @@ class MyQuizState extends State<MyQuiz> with SingleTickerProviderStateMixin {
     counter_--;
   }
 
+  int o = 0;
   List<Container> return_icon_list_view(answeristright, icon_list) {
     if (answeristright == true) {
       icon_list[counter_] = Container(
@@ -141,559 +142,607 @@ class MyQuizState extends State<MyQuiz> with SingleTickerProviderStateMixin {
     final isKeyboard = MediaQuery.of(context).viewInsets.bottom != 0;
 
     return Scaffold(
-        body: FutureBuilder<QuerySnapshot>(
-            future: ref.get(),
-            builder: ((context, snapshot) {
-              var data2 = snapshot.data?.docs;
-              data2?.shuffle();
-              List dat = [];
+      resizeToAvoidBottomInset: false,
+      body: SingleChildScrollView(
+        reverse: false,
+        physics: ClampingScrollPhysics(),
+        child: SafeArea(
+          child: Container(
+              width: 500,
+              height: 640,
+              child: FutureBuilder<QuerySnapshot>(
+                  future: ref.get(),
+                  builder: ((context, snapshot) {
+                    var data2 = snapshot.data?.docs;
+                    if (o == 0) {
+                      data2?.shuffle();
+                      o++;
+                    }
+                    List dat = [];
 
-              for (int i = 0; i <= data2!.length - 1; i++) {
-                if (data2[i]["category"] == widget.category &&
-                    data2[i]["toTranslateWord"] != "dummy") {
-                  dat.add(data2[i]);
-                }
-              }
-              if (counter >= dat.length - 1) {
-                counter_ = dat.length - 1;
-              }
+                    for (int i = 0; i <= data2!.length - 1; i++) {
+                      if (data2[i]["category"] == widget.category &&
+                          data2[i]["toTranslateWord"] != "dummy") {
+                        dat.add(data2[i]);
+                      }
+                    }
+                    if (counter >= dat.length - 1) {
+                      counter_ = dat.length - 1;
+                    }
+                    if (o == 0) {
+                      dat.shuffle();
 
-              Map? data = dat[counter_].data() as Map?;
+                      o++;
+                    }
+                    Map? data = dat[counter_].data() as Map?;
 
-              if (snapshot.hasData &&
-                  counter_ != dat.length - 1 &&
-                  counter_ <= widget.NoOfVocabs) {
-                print(counter_);
-                String hint = "";
-                for (int i = 0; i < data!["toTranslateWord"].length; i++) {
-                  if (i.isEven) {
-                    hint = hint + data["toTranslateWord"][i];
-                  } else {
-                    hint = hint + "_";
-                  }
-                }
+                    if (snapshot.hasData &&
+                        counter_ != dat.length - 1 &&
+                        counter_ <= widget.NoOfVocabs &&
+                        timeron == false) {
+                      String hint = "";
+                      for (int i = 0;
+                          i < data!["toTranslateWord"].length;
+                          i++) {
+                        if (i.isEven) {
+                          hint = hint + data["toTranslateWord"][i];
+                        } else {
+                          hint = hint + "_";
+                        }
+                      }
 
-                return Container(
-                  padding: const EdgeInsets.only(top: 10),
-                  child: Column(
-                      mainAxisAlignment: MainAxisAlignment.start,
-                      crossAxisAlignment: CrossAxisAlignment.center,
-                      children: [
-                        Row(children: [
-                          Spacer(),
-                          CountdownTimer(
-                            endTime: endTime,
-                            textStyle: TextStyle(
-                                color: Colors.green,
-                                fontSize: 20,
-                                fontWeight: FontWeight.bold),
-                          )
-                        ]),
-                        Divider(),
-                        Container(
-                          child: SizedBox(
-                              height: 60,
-                              child: Container(
-                                // height: double.infinity,
-                                // width: double.infinity,
-
-                                child: Align(
-                                  child: ListView.builder(
-                                    scrollDirection: Axis.horizontal,
-                                    padding:
-                                        EdgeInsets.symmetric(horizontal: 10),
-                                    itemCount: NoOfVocabs,
-                                    itemBuilder: (context, index) {
-                                      return Row(
-                                        children: [
-                                          Column(
-                                            mainAxisAlignment:
-                                                MainAxisAlignment.center,
-                                            crossAxisAlignment:
-                                                CrossAxisAlignment.center,
-                                            children: [
-                                              SizedBox(
-                                                  width: 30,
-                                                  child: InkWell(
-                                                    child: Text(
-                                                      "  ${(index + 1).toString()}",
-                                                      textAlign:
-                                                          TextAlign.center,
-                                                    ),
-                                                    onTap: () {
-                                                      setState(() {
-                                                        setCounter(index);
-                                                      });
-                                                    },
-                                                  )),
-                                              SizedBox(
-                                                  width: 30,
-                                                  child: icon_list[index]),
-                                            ],
-                                          ),
-                                          VerticalDivider()
-                                        ],
-                                      );
-                                    },
-                                    shrinkWrap: true,
-                                  ),
-                                ),
-                              )),
-                        ),
-                        Container(
-                          padding: const EdgeInsets.symmetric(vertical: 30),
-                          child: Transform(
-                              transform: Matrix4.identity()
-                                ..setEntry(3, 2, 0.001)
-                                ..rotateY(pi * _animation.value * 2),
-                              child: GestureDetector(
-                                  onTap: () {
-                                    usedtip = true;
-                                    if (_animationStatus ==
-                                        AnimationStatus.dismissed) {
-                                      _animationController.forward();
-                                    } else {
-                                      _animationController.reverse();
-                                    }
+                      return Container(
+                        padding: const EdgeInsets.only(top: 0),
+                        child: Column(
+                            mainAxisAlignment: MainAxisAlignment.start,
+                            crossAxisAlignment: CrossAxisAlignment.center,
+                            children: [
+                              Row(children: [
+                                Spacer(),
+                                CountdownTimer(
+                                  endWidget: Text("Countdown expired!"),
+                                  onEnd: () {
+                                    setState(() {
+                                      timeron = true;
+                                    });
                                   },
-                                  child: _animation.value >= 0.5
-                                      ? Container(
-                                          color: Color(0xffA1CAD0),
-                                          height: 180,
-                                          width: 300,
-                                          child: Card(
-                                              color: Color(0xffA1CAD0),
-                                              child: Container(
-                                                  child: Center(
-                                                child: Text(
-                                                  "${hint}",
-                                                  style:
-                                                      TextStyle(fontSize: 30),
+                                  endTime: endTime,
+                                  textStyle: TextStyle(
+                                      color: Colors.green,
+                                      fontSize: 20,
+                                      fontWeight: FontWeight.bold),
+                                )
+                              ]),
+                              Divider(),
+                              Container(
+                                child: SizedBox(
+                                    height: 60,
+                                    child: Container(
+                                      // height: double.infinity,
+                                      // width: double.infinity,
+
+                                      child: Align(
+                                        child: ListView.builder(
+                                          scrollDirection: Axis.horizontal,
+                                          padding: EdgeInsets.symmetric(
+                                              horizontal: 10),
+                                          itemCount: NoOfVocabs - 1,
+                                          itemBuilder: (context, index) {
+                                            return Row(
+                                              children: [
+                                                Column(
+                                                  mainAxisAlignment:
+                                                      MainAxisAlignment.center,
+                                                  crossAxisAlignment:
+                                                      CrossAxisAlignment.center,
+                                                  children: [
+                                                    SizedBox(
+                                                        width: 30,
+                                                        child: InkWell(
+                                                          child: Text(
+                                                            "  ${(index + 1).toString()}",
+                                                            textAlign: TextAlign
+                                                                .center,
+                                                          ),
+                                                          onTap: () {
+                                                            setState(() {
+                                                              setCounter(index);
+                                                            });
+                                                          },
+                                                        )),
+                                                    SizedBox(
+                                                        width: 30,
+                                                        child:
+                                                            icon_list[index]),
+                                                  ],
                                                 ),
+                                                VerticalDivider()
+                                              ],
+                                            );
+                                          },
+                                          shrinkWrap: true,
+                                        ),
+                                      ),
+                                    )),
+                              ),
+                              Container(
+                                padding:
+                                    const EdgeInsets.symmetric(vertical: 30),
+                                child: Transform(
+                                    transform: Matrix4.identity()
+                                      ..setEntry(3, 2, 0.001)
+                                      ..rotateY(pi * _animation.value * 2),
+                                    child: GestureDetector(
+                                        onTap: () {
+                                          usedtip = true;
+                                          if (_animationStatus ==
+                                              AnimationStatus.dismissed) {
+                                            _animationController.forward();
+                                          } else {
+                                            _animationController.reverse();
+                                          }
+                                        },
+                                        child: _animation.value >= 0.5
+                                            ? Container(
+                                                color: Color(0xffA1CAD0),
+                                                height: 180,
+                                                width: 300,
+                                                child: Card(
+                                                    color: Color(0xffA1CAD0),
+                                                    child: Container(
+                                                        child: Center(
+                                                      child: Text(
+                                                        "${hint}",
+                                                        style: TextStyle(
+                                                            fontSize: 30),
+                                                      ),
+                                                    ))),
+                                              )
+                                            : Container(
+                                                color: Color(0xffA1CAD0),
+                                                height: 180,
+                                                width: 300,
+                                                child: Card(
+                                                    color: Color(0xffA1CAD0),
+                                                    child: Container(
+                                                        child: Center(
+                                                      child: Text(
+                                                        "${data["germanWord"]}",
+                                                        style: TextStyle(
+                                                          fontSize: 30,
+                                                        ),
+                                                      ),
+                                                    ))),
                                               ))),
-                                        )
-                                      : Container(
-                                          color: Color(0xffA1CAD0),
-                                          height: 180,
-                                          width: 300,
-                                          child: Card(
-                                              color: Color(0xffA1CAD0),
-                                              child: Container(
-                                                  child: Center(
-                                                child: Text(
-                                                  "${data["germanWord"]}",
-                                                  style: TextStyle(
-                                                    fontSize: 30,
+                              ),
+                              Divider(),
+                              Expanded(
+                                child: Container(
+                                    color: Color(0xffA1CAD0),
+                                    height: 180,
+                                    width: 300,
+                                    child: Card(
+                                        color: Color(0xffA1CAD0),
+                                        child: Container(
+                                            child: Center(
+                                          child: TextFormField(
+                                              scrollPadding:
+                                                  EdgeInsets.only(bottom: 200),
+                                              controller: _textController,
+                                              decoration: InputDecoration(
+                                                filled: true,
+                                                fillColor: Colors.white30,
+                                                contentPadding:
+                                                    const EdgeInsets.symmetric(
+                                                        vertical: 2),
+                                                hintText: "Translation",
+                                                focusedBorder:
+                                                    OutlineInputBorder(
+                                                  borderRadius:
+                                                      BorderRadius.circular(
+                                                          25.0),
+                                                  borderSide: BorderSide(
+                                                    color: Colors.white,
                                                   ),
                                                 ),
-                                              ))),
-                                        ))),
-                        ),
-                        Divider(),
-                        Expanded(
-                          child: Container(
-                              color: Color(0xffA1CAD0),
-                              height: 180,
+                                                enabledBorder:
+                                                    OutlineInputBorder(
+                                                  borderRadius:
+                                                      BorderRadius.circular(
+                                                          25.0),
+                                                  borderSide: BorderSide(
+                                                    color: Colors.white,
+                                                    width: 0.0,
+                                                  ),
+                                                ),
+                                              ),
+                                              style: TextStyle(
+                                                  fontSize: 20,
+                                                  fontFamily: "lato",
+                                                  fontWeight: FontWeight.bold,
+                                                  color: Colors.grey),
+                                              textAlign: TextAlign.center,
+                                              onChanged: (value) {}),
+                                        )))),
+                              ),
+                              Container(
+                                padding: const EdgeInsets.only(top: 30),
+                                child: Row(
+                                  mainAxisAlignment:
+                                      MainAxisAlignment.spaceEvenly,
+                                  children: [
+                                    SizedBox(
+                                      width: 120,
+                                      height: 60,
+                                      child: ElevatedButton(
+                                          onPressed: () {
+                                            setState(() {
+                                              decrementCounter();
+                                            });
+                                            ;
+                                          },
+                                          child: Row(
+                                            mainAxisAlignment:
+                                                MainAxisAlignment.end,
+                                            children: [
+                                              Icon(
+                                                Icons.skip_previous_outlined,
+                                                color: Colors.black,
+                                              ),
+                                              Text(
+                                                "Previous",
+                                                style: TextStyle(
+                                                    fontSize: 16,
+                                                    fontFamily: "lato",
+                                                    color: Colors.black),
+                                              ),
+                                            ],
+                                          ),
+                                          style: ElevatedButton.styleFrom(
+                                              primary: Colors.white,
+                                              minimumSize:
+                                                  const Size.fromHeight(50))),
+                                    ),
+                                    SizedBox(
+                                      width: 120,
+                                      height: 60,
+                                      child: ElevatedButton(
+                                          onPressed: () {
+                                            setState(() {
+                                              Map<String, dynamic> toadd =
+                                                  SaveAnswers(
+                                                      _textController.text,
+                                                      data["toTranslateWord"],
+                                                      data["germanWord"],
+                                                      usedtip);
+                                              askedvocbs.add(toadd);
+                                              usedtip = false;
+                                            });
+                                            ;
+
+                                            setState(() {
+                                              var answeristright = false;
+                                              if (data["toTranslateWord"]
+                                                      .toLowerCase() ==
+                                                  _textController.text
+                                                      .toLowerCase())
+                                                answeristright = true;
+
+                                              icon_list = return_icon_list_view(
+                                                  answeristright, icon_list);
+                                            });
+                                            _textController.clear();
+                                            incrementCounter();
+
+                                            var answeristright = false;
+                                          },
+                                          child: Row(
+                                            mainAxisAlignment:
+                                                MainAxisAlignment.end,
+                                            children: [
+                                              Text(
+                                                "Next",
+                                                style: TextStyle(
+                                                    fontSize: 16,
+                                                    fontFamily: "lato",
+                                                    color: Colors.black),
+                                              ),
+                                              Icon(
+                                                Icons.skip_next_outlined,
+                                                color: Colors.black,
+                                              ),
+                                            ],
+                                          ),
+                                          style: ElevatedButton.styleFrom(
+                                              primary: Colors.white,
+                                              minimumSize:
+                                                  const Size.fromHeight(50))),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                              Container(
+                                padding: const EdgeInsets.only(top: 17),
+                                child: LinearPercentIndicator(
+                                  lineHeight: 14.0,
+                                  percent: counter_ / (NoOfVocabs - 1),
+                                  backgroundColor: Colors.grey,
+                                  progressColor: Color(0xffA1CAD0),
+                                  animation: true,
+                                  center: Text(
+                                      "${((counter_ / (NoOfVocabs - 1)) * 100).toStringAsFixed(0)}%"),
+                                  linearStrokeCap: LinearStrokeCap.roundAll,
+                                ),
+                              ),
+                            ]),
+                      );
+                    } else {
+                      //addtodb();
+                      var corrects = getNoOfCorrectAnswers();
+                      Color col = corrects[4];
+                      if (corrects[3] == "A" || corrects[3] == "B") {
+                        controller.play();
+                      }
+                      return Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          crossAxisAlignment: CrossAxisAlignment.center,
+                          children: [
+                            ConfettiWidget(
+                              confettiController: controller,
+                              shouldLoop: false,
+                              //maxBlastForce: 100,
+                              //minBlastForce: 80,
+                              emissionFrequency: 0.5,
+                              blastDirectionality:
+                                  BlastDirectionality.explosive,
+                            ),
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              crossAxisAlignment: CrossAxisAlignment.center,
+                              children: [
+                                if (!isKeyboard)
+                                  Image(
+                                      image:
+                                          AssetImage('assets/images/logo.png'),
+                                      width: 144,
+                                      height: 185),
+                                if (!isKeyboard)
+                                  BubbleSpecialThree(
+                                    text: corrects[5],
+                                    color: Color(0xffA1CAD0),
+                                    tail: true,
+                                    isSender: false,
+                                    textStyle: TextStyle(
+                                        color: Colors.white, fontSize: 25),
+                                  ),
+                              ],
+                            ),
+                            Divider(),
+                            Container(
                               width: 300,
-                              child: Card(
-                                  color: Color(0xffA1CAD0),
-                                  child: Container(
-                                      child: Center(
-                                    child: TextFormField(
-                                        controller: _textController,
-                                        decoration: InputDecoration(
-                                          filled: true,
-                                          fillColor: Colors.white30,
-                                          contentPadding:
-                                              const EdgeInsets.symmetric(
-                                                  vertical: 2),
-                                          hintText: "Translation",
-                                          focusedBorder: OutlineInputBorder(
-                                            borderRadius:
-                                                BorderRadius.circular(25.0),
-                                            borderSide: BorderSide(
-                                              color: Colors.white,
-                                            ),
-                                          ),
-                                          enabledBorder: OutlineInputBorder(
-                                            borderRadius:
-                                                BorderRadius.circular(25.0),
-                                            borderSide: BorderSide(
-                                              color: Colors.white,
-                                              width: 0.0,
-                                            ),
-                                          ),
-                                        ),
+                              decoration: BoxDecoration(
+                                borderRadius: BorderRadius.circular(12),
+                                color: Colors.white,
+                                boxShadow: [
+                                  BoxShadow(
+                                    color: Colors.grey.withOpacity(0.5),
+                                    spreadRadius: 5,
+                                    blurRadius: 7,
+                                    offset: Offset(0, 3),
+                                  ),
+                                ],
+                              ),
+                              child: Column(
+                                children: [
+                                  Row(
+                                    mainAxisAlignment: MainAxisAlignment.center,
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.center,
+                                    children: [
+                                      Container(
+                                        child: Icon(Icons.check_box,
+                                            size: 30,
+                                            color: Colors.greenAccent),
+                                        padding: const EdgeInsets.all(12),
+                                      ),
+                                      Text(
+                                        corrects[0].toString(),
                                         style: TextStyle(
                                             fontSize: 20,
-                                            fontFamily: "lato",
-                                            fontWeight: FontWeight.bold,
-                                            color: Colors.grey),
-                                        textAlign: TextAlign.center,
-                                        onChanged: (value) {}),
-                                  )))),
-                        ),
-                        Container(
-                          padding: const EdgeInsets.only(top: 30),
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                            children: [
-                              SizedBox(
-                                width: 120,
-                                height: 60,
-                                child: ElevatedButton(
-                                    onPressed: () {
-                                      setState(() {
-                                        decrementCounter();
-                                      });
-                                      ;
-                                    },
-                                    child: Row(
-                                      mainAxisAlignment: MainAxisAlignment.end,
-                                      children: [
-                                        Icon(
-                                          Icons.skip_previous_outlined,
-                                          color: Colors.black,
-                                        ),
-                                        Text(
-                                          "Previous",
-                                          style: TextStyle(
-                                              fontSize: 16,
-                                              fontFamily: "lato",
-                                              color: Colors.black),
-                                        ),
-                                      ],
+                                            fontWeight: FontWeight.bold),
+                                      )
+                                    ],
+                                  ),
+                                  Container(
+                                    width: 300,
+                                    decoration: const BoxDecoration(
+                                        color: Color(0xffA1CAD0),
+                                        borderRadius: BorderRadius.only(
+                                            bottomRight: Radius.circular(12),
+                                            bottomLeft: Radius.circular(12))),
+                                    child: Text(
+                                      "Right Answers",
+                                      textAlign: TextAlign.center,
                                     ),
-                                    style: ElevatedButton.styleFrom(
-                                        primary: Colors.white,
-                                        minimumSize:
-                                            const Size.fromHeight(50))),
+                                    padding: const EdgeInsets.all(12),
+                                  )
+                                ],
                               ),
-                              SizedBox(
-                                width: 120,
-                                height: 60,
-                                child: ElevatedButton(
-                                    onPressed: () {
-                                      setState(() {
-                                        Map<String, dynamic> toadd =
-                                            SaveAnswers(
-                                                _textController.text,
-                                                data["toTranslateWord"],
-                                                data["germanWord"],
-                                                usedtip);
-                                        askedvocbs.add(toadd);
-                                        usedtip = false;
-                                      });
-                                      ;
-
-                                      setState(() {
-                                        var answeristright = false;
-                                        if (data["toTranslateWord"]
-                                                .toLowerCase() ==
-                                            _textController.text.toLowerCase())
-                                          answeristright = true;
-
-                                        icon_list = return_icon_list_view(
-                                            answeristright, icon_list);
-                                      });
-                                      _textController.clear();
-                                      incrementCounter();
-
-                                      var answeristright = false;
-                                    },
-                                    child: Row(
-                                      mainAxisAlignment: MainAxisAlignment.end,
-                                      children: [
-                                        Text(
-                                          "Next",
-                                          style: TextStyle(
-                                              fontSize: 16,
-                                              fontFamily: "lato",
-                                              color: Colors.black),
-                                        ),
-                                        Icon(
-                                          Icons.skip_next_outlined,
-                                          color: Colors.black,
-                                        ),
-                                      ],
+                            ),
+                            Divider(),
+                            Container(
+                              width: 300,
+                              decoration: BoxDecoration(
+                                borderRadius: BorderRadius.circular(12),
+                                color: Colors.white,
+                                boxShadow: [
+                                  BoxShadow(
+                                    color: Colors.grey.withOpacity(0.5),
+                                    spreadRadius: 5,
+                                    blurRadius: 7,
+                                    offset: Offset(0, 3),
+                                  ),
+                                ],
+                              ),
+                              child: Column(
+                                children: [
+                                  Row(
+                                    mainAxisAlignment: MainAxisAlignment.center,
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.center,
+                                    children: [
+                                      Container(
+                                        child: Icon(
+                                            Icons.format_align_left_sharp,
+                                            size: 30,
+                                            color: Colors.blueAccent),
+                                        padding: const EdgeInsets.all(12),
+                                      ),
+                                      Text(
+                                        corrects[1].toString(),
+                                        style: TextStyle(
+                                            fontSize: 20,
+                                            fontWeight: FontWeight.bold),
+                                      )
+                                    ],
+                                  ),
+                                  Container(
+                                    width: 300,
+                                    decoration: const BoxDecoration(
+                                        color: Color(0xffA1CAD0),
+                                        borderRadius: BorderRadius.only(
+                                            bottomRight: Radius.circular(12),
+                                            bottomLeft: Radius.circular(12))),
+                                    child: Text(
+                                      "Total Vocabularies",
+                                      textAlign: TextAlign.center,
                                     ),
-                                    style: ElevatedButton.styleFrom(
-                                        primary: Colors.white,
-                                        minimumSize:
-                                            const Size.fromHeight(50))),
+                                    padding: const EdgeInsets.all(12),
+                                  )
+                                ],
                               ),
-                            ],
-                          ),
-                        ),
-                        Container(
-                          padding: const EdgeInsets.only(top: 17),
-                          child: LinearPercentIndicator(
-                            lineHeight: 14.0,
-                            percent: counter_ / (NoOfVocabs),
-                            backgroundColor: Colors.grey,
-                            progressColor: Color(0xffA1CAD0),
-                            animation: true,
-                            center: Text(
-                                "${((counter_ / (NoOfVocabs)) * 100).toStringAsFixed(0)}%"),
-                            linearStrokeCap: LinearStrokeCap.roundAll,
-                          ),
-                        ),
-                      ]),
-                );
-              } else {
-                //addtodb();
-                var corrects = getNoOfCorrectAnswers();
-                Color col = corrects[4];
-                if (corrects[3] == "A" || corrects[3] == "B") {
-                  controller.play();
-                }
-                return Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    crossAxisAlignment: CrossAxisAlignment.center,
-                    children: [
-                      ConfettiWidget(
-                        confettiController: controller,
-                        shouldLoop: false,
-                        //maxBlastForce: 100,
-                        //minBlastForce: 80,
-                        emissionFrequency: 0.5,
-                        blastDirectionality: BlastDirectionality.explosive,
-                      ),
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        crossAxisAlignment: CrossAxisAlignment.center,
-                        children: [
-                          if (!isKeyboard)
-                            Image(
-                                image: AssetImage('assets/images/logo.png'),
-                                width: 144,
-                                height: 185),
-                          if (!isKeyboard)
-                            BubbleSpecialThree(
-                              text: 'You are doing\n great! :)',
-                              color: Color(0xffA1CAD0),
-                              tail: true,
-                              isSender: false,
-                              textStyle:
-                                  TextStyle(color: Colors.white, fontSize: 25),
                             ),
-                        ],
-                      ),
-                      Divider(),
-                      Container(
-                        width: 300,
-                        decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(12),
-                          color: Colors.white,
-                          boxShadow: [
-                            BoxShadow(
-                              color: Colors.grey.withOpacity(0.5),
-                              spreadRadius: 5,
-                              blurRadius: 7,
-                              offset: Offset(0, 3),
-                            ),
-                          ],
-                        ),
-                        child: Column(
-                          children: [
-                            Row(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              crossAxisAlignment: CrossAxisAlignment.center,
-                              children: [
-                                Container(
-                                  child: Icon(Icons.check_box,
-                                      size: 30, color: Colors.greenAccent),
-                                  padding: const EdgeInsets.all(12),
-                                ),
-                                Text(
-                                  corrects[0].toString(),
-                                  style: TextStyle(
-                                      fontSize: 20,
-                                      fontWeight: FontWeight.bold),
-                                )
-                              ],
-                            ),
+                            Divider(),
                             Container(
                               width: 300,
-                              decoration: const BoxDecoration(
-                                  color: Color(0xffA1CAD0),
-                                  borderRadius: BorderRadius.only(
-                                      bottomRight: Radius.circular(12),
-                                      bottomLeft: Radius.circular(12))),
-                              child: Text(
-                                "Right Answers",
-                                textAlign: TextAlign.center,
+                              decoration: BoxDecoration(
+                                borderRadius: BorderRadius.circular(12),
+                                color: Colors.white,
+                                boxShadow: [
+                                  BoxShadow(
+                                    color: Colors.grey.withOpacity(0.5),
+                                    spreadRadius: 5,
+                                    blurRadius: 7,
+                                    offset: Offset(0, 3),
+                                  ),
+                                ],
                               ),
-                              padding: const EdgeInsets.all(12),
-                            )
-                          ],
-                        ),
-                      ),
-                      Divider(),
-                      Container(
-                        width: 300,
-                        decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(12),
-                          color: Colors.white,
-                          boxShadow: [
-                            BoxShadow(
-                              color: Colors.grey.withOpacity(0.5),
-                              spreadRadius: 5,
-                              blurRadius: 7,
-                              offset: Offset(0, 3),
+                              child: Column(
+                                children: [
+                                  Row(
+                                    mainAxisAlignment: MainAxisAlignment.center,
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.center,
+                                    children: [
+                                      Container(
+                                        child: Icon(Icons.person,
+                                            size: 30, color: Colors.blueAccent),
+                                        padding: const EdgeInsets.all(12),
+                                      ),
+                                      Text(
+                                        "${corrects[2].toString()} %",
+                                        style: TextStyle(
+                                            fontSize: 20,
+                                            fontWeight: FontWeight.bold),
+                                      )
+                                    ],
+                                  ),
+                                  Container(
+                                    width: 300,
+                                    decoration: const BoxDecoration(
+                                        color: Color(0xffA1CAD0),
+                                        borderRadius: BorderRadius.only(
+                                            bottomRight: Radius.circular(12),
+                                            bottomLeft: Radius.circular(12))),
+                                    child: Text(
+                                      "Accomplished",
+                                      textAlign: TextAlign.center,
+                                    ),
+                                    padding: const EdgeInsets.all(12),
+                                  )
+                                ],
+                              ),
                             ),
-                          ],
-                        ),
-                        child: Column(
-                          children: [
-                            Row(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              crossAxisAlignment: CrossAxisAlignment.center,
-                              children: [
-                                Container(
-                                  child: Icon(Icons.format_align_left_sharp,
-                                      size: 30, color: Colors.blueAccent),
-                                  padding: const EdgeInsets.all(12),
-                                ),
-                                Text(
-                                  corrects[1].toString(),
-                                  style: TextStyle(
-                                      fontSize: 20,
-                                      fontWeight: FontWeight.bold),
-                                )
-                              ],
-                            ),
+                            Divider(),
                             Container(
                               width: 300,
-                              decoration: const BoxDecoration(
-                                  color: Color(0xffA1CAD0),
-                                  borderRadius: BorderRadius.only(
-                                      bottomRight: Radius.circular(12),
-                                      bottomLeft: Radius.circular(12))),
-                              child: Text(
-                                "Total Vocabularies",
-                                textAlign: TextAlign.center,
+                              decoration: BoxDecoration(
+                                borderRadius: BorderRadius.circular(12),
+                                color: col,
+                                boxShadow: [
+                                  BoxShadow(
+                                    color: Colors.grey.withOpacity(0.5),
+                                    spreadRadius: 5,
+                                    blurRadius: 7,
+                                    offset: Offset(0, 3),
+                                  ),
+                                ],
                               ),
-                              padding: const EdgeInsets.all(12),
-                            )
-                          ],
-                        ),
-                      ),
-                      Divider(),
-                      Container(
-                        width: 300,
-                        decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(12),
-                          color: Colors.white,
-                          boxShadow: [
-                            BoxShadow(
-                              color: Colors.grey.withOpacity(0.5),
-                              spreadRadius: 5,
-                              blurRadius: 7,
-                              offset: Offset(0, 3),
-                            ),
-                          ],
-                        ),
-                        child: Column(
-                          children: [
-                            Row(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              crossAxisAlignment: CrossAxisAlignment.center,
-                              children: [
-                                Container(
-                                  child: Icon(Icons.person,
-                                      size: 30, color: Colors.blueAccent),
-                                  padding: const EdgeInsets.all(12),
-                                ),
-                                Text(
-                                  "${corrects[2].toString()} %",
-                                  style: TextStyle(
-                                      fontSize: 20,
-                                      fontWeight: FontWeight.bold),
-                                )
-                              ],
-                            ),
-                            Container(
-                              width: 300,
-                              decoration: const BoxDecoration(
-                                  color: Color(0xffA1CAD0),
-                                  borderRadius: BorderRadius.only(
-                                      bottomRight: Radius.circular(12),
-                                      bottomLeft: Radius.circular(12))),
-                              child: Text(
-                                "Accomplished",
-                                textAlign: TextAlign.center,
+                              child: Column(
+                                children: [
+                                  Row(
+                                    mainAxisAlignment: MainAxisAlignment.center,
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.center,
+                                    children: [
+                                      Container(
+                                        child: Icon(Icons.school_rounded,
+                                            size: 30, color: Colors.blueAccent),
+                                        padding: const EdgeInsets.all(12),
+                                      ),
+                                      Text(
+                                        "${corrects[3].toString()}",
+                                        style: TextStyle(
+                                            fontSize: 20,
+                                            fontWeight: FontWeight.bold),
+                                      )
+                                    ],
+                                  ),
+                                  Container(
+                                    width: 300,
+                                    decoration: const BoxDecoration(
+                                        color: Color(0xffA1CAD0),
+                                        borderRadius: BorderRadius.only(
+                                            bottomRight: Radius.circular(12),
+                                            bottomLeft: Radius.circular(12))),
+                                    child: Text(
+                                      "Rating",
+                                      textAlign: TextAlign.center,
+                                    ),
+                                    padding: const EdgeInsets.all(12),
+                                  )
+                                ],
                               ),
-                              padding: const EdgeInsets.all(12),
-                            )
-                          ],
-                        ),
-                      ),
-                      Divider(),
-                      Container(
-                        width: 300,
-                        decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(12),
-                          color: col,
-                          boxShadow: [
-                            BoxShadow(
-                              color: Colors.grey.withOpacity(0.5),
-                              spreadRadius: 5,
-                              blurRadius: 7,
-                              offset: Offset(0, 3),
                             ),
-                          ],
-                        ),
-                        child: Column(
-                          children: [
-                            Row(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              crossAxisAlignment: CrossAxisAlignment.center,
-                              children: [
-                                Container(
-                                  child: Icon(Icons.school_rounded,
-                                      size: 30, color: Colors.blueAccent),
-                                  padding: const EdgeInsets.all(12),
-                                ),
-                                Text(
-                                  "${corrects[3].toString()}",
-                                  style: TextStyle(
-                                      fontSize: 20,
-                                      fontWeight: FontWeight.bold),
-                                )
-                              ],
-                            ),
-                            Container(
-                              width: 300,
-                              decoration: const BoxDecoration(
-                                  color: Color(0xffA1CAD0),
-                                  borderRadius: BorderRadius.only(
-                                      bottomRight: Radius.circular(12),
-                                      bottomLeft: Radius.circular(12))),
-                              child: Text(
-                                "Rating",
-                                textAlign: TextAlign.center,
-                              ),
-                              padding: const EdgeInsets.all(12),
-                            )
-                          ],
-                        ),
-                      ),
-                    ]);
-              }
-            })));
+                          ]);
+                    }
+                  }))),
+        ),
+      ),
+    );
   }
 
   List getNoOfCorrectAnswers() {
     List results = List.empty(growable: true);
     int correct = 0;
     int total = 0;
-    for (int i = 0; i < askedvocbs.length-1; i++) {
+    for (int i = 0; i < askedvocbs.length - 1; i++) {
       total++;
       if (askedvocbs[i]["answerRight"].toString() == "true") {
         correct++;
       }
     }
+    var text = "You are \ndoing great!";
     String rating = "A";
     results.add(correct);
     results.add(total);
@@ -703,19 +752,24 @@ class MyQuizState extends State<MyQuiz> with SingleTickerProviderStateMixin {
       rating = "A";
     } else if (results[2] >= 75) {
       rating = "B";
+
       col = Colors.lightGreen;
     } else if (results[2] >= 50) {
       rating = "C";
       col = Colors.yellow;
+      text = "Good job";
     } else if (results[2] >= 25) {
       rating = "D";
       col = Colors.yellowAccent;
+      text = "Keep learning,\nyou are improving :)";
     } else {
       rating = "E";
       col = Colors.redAccent;
+      text = "Hold on, \nkeep learning!";
     }
     results.add(rating);
     results.add(col);
+    results.add(text);
     return results;
   }
 

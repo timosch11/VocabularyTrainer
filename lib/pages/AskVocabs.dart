@@ -56,8 +56,10 @@ class MyAskVocabsWidgetState extends State<MyAskVocabsWidget> {
         NoOfVocabs: NoOfVocs,
       )
     ];
-    // TODO: implement build
+
     print(counter);
-    return MaterialApp(home: Scaffold(body: screens[counter]));
+    return MaterialApp(
+        home:
+            Scaffold(resizeToAvoidBottomInset: false, body: screens[counter]));
   }
 }

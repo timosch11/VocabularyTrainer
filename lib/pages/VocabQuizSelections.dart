@@ -32,7 +32,7 @@ class MyCreateQuizWidgetState extends State<MyCreateQuizWidget> {
       .map((e) => e.toString())
       .toList();
   var selectedCurrency, selectedType;
-
+  var texty = "Start 1 min long test with 5 vocabs";
   List<String?> result = List.filled(2, "0");
   @override
   Widget build(BuildContext context) => Container(
