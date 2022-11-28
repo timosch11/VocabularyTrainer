@@ -79,7 +79,7 @@ class MyLoginWidgetState extends State<MyLoginWidget> {
                                     controller: emailController,
                                     decoration: InputDecoration(
                                         labelText: "E-Mail",
-                                        hintText: "Enter your e-mail Adress",
+                                        hintText: "Please, enter your e-mail address",
                                         prefixIcon: Icon(Icons.email),
                                         border: OutlineInputBorder()),
                                     onChanged: (String value) {},
@@ -100,7 +100,7 @@ class MyLoginWidgetState extends State<MyLoginWidget> {
                                     keyboardType: TextInputType.visiblePassword,
                                     decoration: InputDecoration(
                                         labelText: "Password",
-                                        hintText: "Enter your Password",
+                                        hintText: "Please, enter your Password",
                                         prefixIcon: Icon(Icons.password),
                                         border: OutlineInputBorder()),
                                     onChanged: (String value) {},

@@ -76,7 +76,7 @@ class MyHomeWidgetState extends State<MyHomeWidget> {
                   Container(
                       padding: const EdgeInsets.all(8.0),
                       child:
-                          Text("${user.displayName.toString().toUpperCase()}")),
+                          Text("PineAPPulary")),
                   Flag.fromCode(
                     FlagsCode.GB,
                     width: 45,
@@ -91,8 +91,8 @@ class MyHomeWidgetState extends State<MyHomeWidget> {
               currentIndex: _currentIndex,
               selectedFontSize: 10,
               selectedIconTheme:
-                  IconThemeData(color: Colors.redAccent, size: 25),
-              selectedItemColor: Colors.white,
+                  IconThemeData(color: Color(0xff1d4e89), size: 25),
+              selectedItemColor: Color(0xff1d4e89),
               selectedLabelStyle: TextStyle(fontWeight: FontWeight.bold),
               unselectedIconTheme: IconThemeData(
                 color: Colors.white,
@@ -105,7 +105,7 @@ class MyHomeWidgetState extends State<MyHomeWidget> {
                   label: 'Home',
                 ),
                 BottomNavigationBarItem(
-                    icon: Icon(Icons.add_outlined),
+                    icon: Icon(Icons.add),
                     backgroundColor: Color(0xffA1CAD0),
                     label: "Add"),
                 BottomNavigationBarItem(
@@ -113,11 +113,11 @@ class MyHomeWidgetState extends State<MyHomeWidget> {
                     backgroundColor: Color(0xffA1CAD0),
                     label: "Learn"),
                 BottomNavigationBarItem(
-                    icon: Icon(Icons.edit_outlined),
+                    icon: Icon(Icons.edit),
                     backgroundColor: Color(0xffA1CAD0),
                     label: "Edit"),
                 BottomNavigationBarItem(
-                    icon: Icon(Icons.person_outline_sharp),
+                    icon: Icon(Icons.person),
                     backgroundColor: Color(0xffA1CAD0),
                     label: "Profil"),
               ],
