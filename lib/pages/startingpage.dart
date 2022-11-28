@@ -79,7 +79,7 @@ class MyStartingPageWidgetState extends State<MyStartingPageWidget> {
                 ),
                 Padding(
                   padding:
-                      const EdgeInsets.symmetric(vertical: 80, horizontal: 10),
+                      const EdgeInsets.symmetric(vertical: 60, horizontal: 10),
                   child: Align(
                     alignment: Alignment.topCenter,
                     child: SingleChildScrollView(
@@ -111,7 +111,7 @@ class MyStartingPageWidgetState extends State<MyStartingPageWidget> {
                                     margin: EdgeInsets.all(4.0),
                                     child: SizedBox(
                                       width: 350,
-                                      height: 167,
+                                      height: 190,
                                       child: Container(
                                         padding: EdgeInsets.all(20),
                                         child: Column(
@@ -193,7 +193,7 @@ Future fetchFact() async {
   if (connectivityResult == ConnectivityResult.mobile ||
       connectivityResult == ConnectivityResult.wifi) {
     final response = await http.get(Uri.parse(
-        "http://randomuselessfact.appspot.com/today.txt?language=en"));
+        "http://randomuselessfact.appspot.com/today.txt?language=de"));
     if (response.statusCode == 200)
       return response.body.toString();
     else

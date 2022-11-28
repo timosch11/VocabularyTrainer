@@ -136,8 +136,8 @@ class MyQuizState extends State<MyQuiz> with SingleTickerProviderStateMixin {
       growable: true);
   @override
   Widget build(BuildContext context) {
-    var NoOfVocabs = widget.NoOfVocabs;
-    print(NoOfVocabs);
+    var NoOfVocabs = widget.NoOfVocabs + 1;
+
     final isKeyboard = MediaQuery.of(context).viewInsets.bottom != 0;
 
     return Scaffold(
@@ -145,6 +145,7 @@ class MyQuizState extends State<MyQuiz> with SingleTickerProviderStateMixin {
             future: ref.get(),
             builder: ((context, snapshot) {
               var data2 = snapshot.data?.docs;
+              data2?.shuffle();
               List dat = [];
 
               for (int i = 0; i <= data2!.length - 1; i++) {
@@ -201,7 +202,7 @@ class MyQuizState extends State<MyQuiz> with SingleTickerProviderStateMixin {
                                     scrollDirection: Axis.horizontal,
                                     padding:
                                         EdgeInsets.symmetric(horizontal: 10),
-                                    itemCount: icon_list.length,
+                                    itemCount: NoOfVocabs,
                                     itemBuilder: (context, index) {
                                       return Row(
                                         children: [
@@ -428,12 +429,12 @@ class MyQuizState extends State<MyQuiz> with SingleTickerProviderStateMixin {
                           padding: const EdgeInsets.only(top: 17),
                           child: LinearPercentIndicator(
                             lineHeight: 14.0,
-                            percent: counter_ / (dat.length - 2),
+                            percent: counter_ / (NoOfVocabs),
                             backgroundColor: Colors.grey,
                             progressColor: Color(0xffA1CAD0),
                             animation: true,
                             center: Text(
-                                "${((counter_ / (dat.length - 2)) * 100).toStringAsFixed(0)}%"),
+                                "${((counter_ / (NoOfVocabs)) * 100).toStringAsFixed(0)}%"),
                             linearStrokeCap: LinearStrokeCap.roundAll,
                           ),
                         ),
