@@ -207,6 +207,6 @@ Future fetchTranslation() async {
   var fact = await fetchFact();
   fact = fact.substring(2, fact.indexOf('Source:'));
   print(fact);
-  var translation = await translator.translate(fact.toString(), to: 'de');
+  var translation = await translator.translate(fact.toString(), to: 'en');
   return translation;
 }

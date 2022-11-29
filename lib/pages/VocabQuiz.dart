@@ -735,9 +735,9 @@ class MyQuizState extends State<MyQuiz> with SingleTickerProviderStateMixin {
   List getNoOfCorrectAnswers() {
     List results = List.empty(growable: true);
     int correct = 0;
-    int total = 0;
+    int total = widget.NoOfVocabs;
     for (int i = 0; i < askedvocbs.length - 1; i++) {
-      total++;
+      //total++;
       if (askedvocbs[i]["answerRight"].toString() == "true") {
         correct++;
       }
@@ -761,7 +761,7 @@ class MyQuizState extends State<MyQuiz> with SingleTickerProviderStateMixin {
     } else if (results[2] >= 25) {
       rating = "D";
       col = Colors.yellowAccent;
-      text = "Keep learning,\nyou are improving :)";
+      text = "Keep learning,\nyou are \nimproving :)";
     } else {
       rating = "E";
       col = Colors.redAccent;
