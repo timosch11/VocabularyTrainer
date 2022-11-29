@@ -6,15 +6,15 @@ import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter_circular_text/circular_text.dart';
 import 'package:liquid_swipe/liquid_swipe.dart';
 import 'package:flag/flag.dart';
-import 'loginscreen.dart';
+import '../Login & Register/loginscreen.dart';
 import 'package:convex_bottom_bar/convex_bottom_bar.dart';
-import "startingpage.dart";
-import 'MyEditVocabs.dart';
-import "AddVocabs.dart";
-import "AskVocabs.dart";
-import "Settings.dart";
-import 'ManageVocabs.dart';
-import "try.dart";
+import 'startingpage.dart';
+import '../Edit/MyEditVocabs.dart';
+import '../AddVocabs/AddVocabs.dart';
+import '../Learn/AskVocabs.dart';
+import '../Settings & Profil/Settings.dart';
+import '../Edit/ManageVocabs.dart';
+import 'ChartOnHome.dart';
 
 class MyHomeWidget extends StatefulWidget {
   const MyHomeWidget({super.key});

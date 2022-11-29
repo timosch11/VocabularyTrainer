@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:chat_bubbles/chat_bubbles.dart';
 import 'registerscreen.dart';
-import 'home.dart';
+import '../Home/home.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 
 class MyLoginWidget extends StatefulWidget {
@@ -79,7 +79,8 @@ class MyLoginWidgetState extends State<MyLoginWidget> {
                                     controller: emailController,
                                     decoration: InputDecoration(
                                         labelText: "E-Mail",
-                                        hintText: "Please, enter your e-mail address",
+                                        hintText:
+                                            "Please, enter your e-mail address",
                                         prefixIcon: Icon(Icons.email),
                                         border: OutlineInputBorder()),
                                     onChanged: (String value) {},

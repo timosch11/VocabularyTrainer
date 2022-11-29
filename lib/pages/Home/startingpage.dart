@@ -6,7 +6,7 @@ import 'package:flutter_circular_text/circular_text.dart';
 import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:http/http.dart' as http;
 import 'package:translator/translator.dart';
-import 'try.dart';
+import 'ChartOnHome.dart';
 
 class MyStartingPageWidget extends StatefulWidget {
   const MyStartingPageWidget({super.key});
