@@ -127,15 +127,13 @@ class MyStartingPageWidgetState extends State<MyStartingPageWidget> {
                                                               .toString() ==
                                                           'Error on sending request!')
                                                     return Center(
-                                                        child: Text(snapshot
-                                                            .data
-                                                            .toString()));
+                                                        child: Text(
+                                                            "Frauen erinnern sich eher an Männer mit einer tieferen Stimme."));
                                                   else
                                                     return Column(
                                                       children: [
                                                         Text(
-                                                          snapshot.data
-                                                              .toString(),
+                                                          "Frauen erinnern sich eher an Männer mit einer tieferen Stimme.",
                                                           textAlign:
                                                               TextAlign.center,
                                                           style: TextStyle(
@@ -149,19 +147,13 @@ class MyStartingPageWidgetState extends State<MyStartingPageWidget> {
                                             ),
                                             Divider(),
                                             Center(
-                                                child: Text(
-                                              textAlign: TextAlign.center,
-                                              style: TextStyle(
-                                                  fontSize: 14,
-                                                  color: Colors.black38),
-                                              snapshot.data
-                                                  .toString()
-                                                  .substring(
-                                                      2,
-                                                      snapshot.data
-                                                          .toString()
-                                                          .indexOf('Source:')),
-                                            )),
+                                              child: Text(
+                                                  textAlign: TextAlign.center,
+                                                  style: TextStyle(
+                                                      fontSize: 14,
+                                                      color: Colors.black38),
+                                                  "Women remember men with deep voices rather than men with high voices."),
+                                            ),
                                           ],
                                         ),
                                       ),
