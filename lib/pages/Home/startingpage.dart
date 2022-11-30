@@ -127,13 +127,15 @@ class MyStartingPageWidgetState extends State<MyStartingPageWidget> {
                                                               .toString() ==
                                                           'Error on sending request!')
                                                     return Center(
-                                                        child: Text(
-                                                            "Frauen erinnern sich eher an Männer mit einer tieferen Stimme."));
+                                                        child: Text(snapshot
+                                                            .data
+                                                            .toString()));
                                                   else
                                                     return Column(
                                                       children: [
-                                                        Text(
-                                                          "Frauen erinnern sich eher an Männer mit einer tieferen Stimme.",
+                                                         Text(
+                                                          snapshot.data
+                                                              .toString(),
                                                           textAlign:
                                                               TextAlign.center,
                                                           style: TextStyle(
@@ -152,7 +154,14 @@ class MyStartingPageWidgetState extends State<MyStartingPageWidget> {
                                                   style: TextStyle(
                                                       fontSize: 14,
                                                       color: Colors.black38),
-                                                  "Women remember men with deep voices rather than men with high voices."),
+                                                  snapshot.data
+                                                  .toString()
+                                                  .substring(
+                                                      2,
+                                                      snapshot.data
+                                                          .toString()
+                                                          .indexOf('Source:')),
+                                                          ),
                                             ),
                                           ],
                                         ),
@@ -199,6 +208,6 @@ Future fetchTranslation() async {
   var fact = await fetchFact();
   fact = fact.substring(2, fact.indexOf('Source:'));
   print(fact);
-  var translation = await translator.translate(fact.toString(), to: 'en');
+  var translation = await translator.translate(fact.toString(), to: 'de');
   return translation;
 }

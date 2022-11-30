@@ -244,7 +244,6 @@ class BarChartSample1State extends State<BarChartSample1> {
                 break;
               case 6:
                 weekDay = DateFormat('EEEE').format(DateTime.now());
-                ;
                 break;
               default:
                 throw Error();
